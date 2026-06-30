@@ -50,7 +50,12 @@
       "Bash([ -f \"$f\" ])",
       "Bash(git commit *)",
       "Bash(git push *)",
-      "Bash(grep -oE \"\\(min-width|width\\):[0-9]{3,}px\" index.html)"
+      "Bash(grep -oE \"\\(min-width|width\\):[0-9]{3,}px\" index.html)",
+      "Bash(python3 -c \"import reportlab; print\\('reportlab', reportlab.Version\\)\")",
+      "Bash(pip install *)",
+      "Bash(python3 -m pip install --quiet reportlab)",
+      "Bash(python3 gen_pdf.py)",
+      "Bash(git check-ignore *)"
     ]
   }
 }

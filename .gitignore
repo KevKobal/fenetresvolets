@@ -4,3 +4,6 @@
 
 # Logs / temp
 *.log
+
+# Documents de travail (non publiés sur le site)
+*.pdf
