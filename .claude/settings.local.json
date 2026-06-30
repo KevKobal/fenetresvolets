@@ -44,7 +44,12 @@
       "Bash(git init *)",
       "Bash(git add *)",
       "Bash(git -c user.name=\"KevKobal\" commit -q -m \"Site mesfenetresvolets.fr — version statique\")",
-      "Bash(git branch *)"
+      "Bash(git branch *)",
+      "Bash(gh repo *)",
+      "Bash(gh api *)",
+      "Bash([ -f \"$f\" ])",
+      "Bash(git commit *)",
+      "Bash(git push *)"
     ]
   }
 }
