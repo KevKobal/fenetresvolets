@@ -234,25 +234,25 @@ const KOMMERLING = {
 // Pièces détachées & accessoires Bubendorff — moteurs, kits, commandes, adaptations
 // (prix indicatifs TTC, photos assets/pieces/)
 const PIECES = {
-  moteur: { label:'Moteurs', icon:'⚙️', intro:'Moteurs Bubendorff radio, filaire et spécifiques (lames orientables, Rolax).', items:[
+  moteur: { label:'Moteurs', icon:'', intro:'Moteurs Bubendorff radio, filaire et spécifiques (lames orientables, Rolax).', items:[
     { id:'mot-r10',        name:'Moteur radio R 10 Nm',            img:'pieces/mot-r-10nm.jpg',       price:238, desc:'Radio, mode AUTO RE2020, fins de course automatiques. Volets jusqu’à 2 m².' },
     { id:'mot-r33',        name:'Moteur radio R 33 Nm',            img:'pieces/mot-r-33nm.jpg',       price:335, desc:'Radio forte puissance pour grands tabliers et volets lourds.' },
     { id:'mot-mi2-25',     name:'Moteur filaire MI2 25 Nm',        img:'pieces/mot-mi2-25nm.jpg',     price:221, desc:'Filaire, compatible centralisation, raccordement secteur direct.' },
     { id:'mot-hy-or',      name:'Moteur radio HY 10 Nm orientable',img:'pieces/mot-hy-orientable.jpg',price:309, desc:'Spécifique volet roulant à lames orientables (gestion lumière).' },
     { id:'mot-rolax',      name:'Moteur Rolax 25/12 radio 25 Nm',  img:'pieces/mot-rolax.jpg',        price:239, desc:'Moteur dédié aux volets Rolax de toiture véranda / verrière.' }
   ]},
-  kit: { label:'Kits de motorisation', icon:'🧰', intro:'Kits complets pour motoriser ou rénover un volet roulant existant (Tradi 2000 mm).', items:[
+  kit: { label:'Kits de motorisation', icon:'', intro:'Kits complets pour motoriser ou rénover un volet roulant existant (Tradi 2000 mm).', items:[
     { id:'kit-r10',     name:'Kit motorisation Radio R 10 Nm',  img:'pieces/kit-r10.jpg',     price:312, desc:'Moteur radio + émetteur. Volets Tradi jusqu’à 2000 mm.' },
     { id:'kit-f10',     name:'Kit motorisation Filaire F 10 Nm',img:'pieces/kit-f10.jpg',     price:312, desc:'Moteur filaire + accessoires. Volets Tradi jusqu’à 2000 mm.' },
     { id:'kit-hybrid',  name:'Kit motorisation Hybrid 10 Nm',   img:'pieces/kit-hybrid.jpg',  price:369, desc:'Solution hybride secteur + batterie. Tradi 2000 mm.' },
     { id:'kit-solaire', name:'Kit motorisation Solaire 10 Nm',  img:'pieces/kit-solaire.jpg', price:567, desc:'Moteur radio R Solar + panneau photovoltaïque. 100% autonome, sans câblage.' }
   ]},
-  commande: { label:'Commandes', icon:'📱', intro:'Télécommandes, points de commande muraux et pilotage connecté.', items:[
+  commande: { label:'Commandes', icon:'', intro:'Télécommandes, points de commande muraux et pilotage connecté.', items:[
     { id:'cmd-horloge', name:'Horloge radio ID2',          img:'pieces/cmd-horloge-id2.jpg',   price:246, desc:'Programmation horaire centralisée de vos volets radio.' },
     { id:'cmd-tyxia',   name:'Émetteur mural Tyxia 2330',  img:'pieces/cmd-emetteur-tyxia.jpg',price:88,  desc:'Point de commande mural sans fil X3D (Delta Dore).' },
     { id:'cmd-idiamant',name:'iDiamant with Netatmo',      img:'pieces/cmd-idiamant.jpg',      price:164, desc:'Box de pilotage connecté : smartphone, scénarios, vocal.' }
   ]},
-  adaptation: { label:'Adaptations & pièces', icon:'🔩', intro:'Adaptateurs, supports, câbles et accessoires de pose Bubendorff.', items:[
+  adaptation: { label:'Adaptations & pièces', icon:'', intro:'Adaptateurs, supports, câbles et accessoires de pose Bubendorff.', items:[
     { id:'adapt-id20',   name:'Adaptateur ID 2.0 (moteur R)',          img:'pieces/adapt-id20.jpg',          price:31, desc:'Adaptation moteur R sur axe Bubendorff ID 2.0.' },
     { id:'adapt-support',name:'Support moteur point fixe',             img:'pieces/adapt-support-moteur.jpg',price:11, desc:'Support de fixation moteur point fixe.' },
     { id:'adapt-cable',  name:'Câble connecteur moteur radio 3 m',     img:'pieces/adapt-cable.jpg',         price:35, desc:'Rallonge / câble de raccordement moteur radio (3 m).' },
@@ -820,7 +820,7 @@ function renderHome(){
       <div style="max-width:1240px;margin:0 auto;padding:20px 32px;display:flex;justify-content:space-between;gap:18px;flex-wrap:wrap">
         <div style="display:flex;align-items:center;gap:11px;font-size:14.5px;font-weight:600;color:var(--ink)"><span style="width:30px;height:30px;border-radius:8px;background:var(--accent-soft);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);font-size:15px">⬡</span>Fabrication 100% française</div>
         <div style="display:flex;align-items:center;gap:11px;font-size:14.5px;font-weight:600;color:var(--ink)"><span style="width:30px;height:30px;border-radius:8px;background:var(--accent-soft);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);font-size:15px">⌂</span>Livraison à domicile</div>
-        <div style="display:flex;align-items:center;gap:11px;font-size:14.5px;font-weight:600;color:var(--ink)"><span style="width:30px;height:30px;border-radius:8px;background:var(--accent-soft);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);font-size:15px">🔒</span>Paiement sécurisé CB</div>
+        <div style="display:flex;align-items:center;gap:11px;font-size:14.5px;font-weight:600;color:var(--ink)"><span style="width:30px;height:30px;border-radius:8px;background:var(--accent-soft);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);font-size:15px">◆</span>Paiement sécurisé CB</div>
         <div style="display:flex;align-items:center;gap:11px;font-size:14.5px;font-weight:600;color:var(--ink)"><span style="width:30px;height:30px;border-radius:8px;background:var(--accent-soft);display:inline-flex;align-items:center;justify-content:center;color:var(--accent);font-size:15px">✦</span>Sur-mesure au mm près</div>
       </div>
     </section>
@@ -863,7 +863,6 @@ function renderHome(){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
         <div onclick="pickProduct('volet',{moteur:'solaire',gamme:'mono'})" style="cursor:pointer;background:var(--ink);color:#fff;border-radius:16px;padding:34px 32px;display:flex;flex-direction:column;justify-content:space-between;min-height:170px" class="card-hover">
           <div>
-            <div style="font-size:26px;margin-bottom:10px">✦</div>
             <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:23px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px">Configurer un volet sur mesure</h3>
             <p style="font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.75);margin:0">Volets solaires Bubendorff & fenêtres Kömmerling, fabriqués à vos dimensions exactes.</p>
           </div>
@@ -871,7 +870,6 @@ function renderHome(){
         </div>
         <div onclick="goPieces()" style="cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:34px 32px;display:flex;flex-direction:column;justify-content:space-between;min-height:170px" class="card-hover">
           <div>
-            <div style="font-size:26px;margin-bottom:10px">⚙️</div>
             <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:23px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px;color:var(--ink)">Acheter des pièces & moteurs</h3>
             <p style="font-size:14.5px;line-height:1.55;color:var(--muted);margin:0">Moteurs, kits de motorisation, commandes et adaptations Bubendorff pour rénover un volet existant.</p>
           </div>
@@ -920,7 +918,7 @@ function renderHome(){
         </div>
         <div style="display:flex;align-items:center;justify-content:center;gap:16px;margin-top:18px">
           <button class="circ-arrow" onclick="savoirNav(-1)" aria-label="Précédent">‹</button>
-          <span style="font-size:12.5px;font-weight:600;color:var(--muted)">📷 Usine en Meurthe-et-Moselle (Grand-Est)</span>
+          <span style="font-size:12.5px;font-weight:600;color:var(--muted)">Usine en Meurthe-et-Moselle (Grand-Est)</span>
           <button class="circ-arrow" onclick="savoirNav(1)" aria-label="Suivant">›</button>
         </div>
       </div>
@@ -1261,7 +1259,7 @@ function renderConfig(){
         <button onclick="setProduct('volet')"   style="${isVolet ? TAB_ON : TAB_OFF}">Volet roulant</button>
         <button onclick="setProduct('fenetre')" style="${isVolet ? TAB_OFF : TAB_ON}">Fenêtre</button>
       </div>
-      <button onclick="goPieces()" class="neon-btn" style="padding:11px 18px;font-size:14px">⚙️ Acheter des pièces & moteurs Bubendorff →</button>
+      <button onclick="goPieces()" class="neon-btn" style="padding:11px 18px;font-size:14px">Acheter des pièces & moteurs Bubendorff →</button>
     </div>
 
     <div style="display:grid;grid-template-columns:1fr 390px;gap:40px;align-items:start">
@@ -1297,7 +1295,7 @@ function renderConfig(){
           </div>
 
           <button onclick="addToCart()" class="neon-btn" style="width:100%;padding:16px;font-size:16px">Ajouter au panier</button>
-          <div style="text-align:center;font-size:12.5px;color:var(--muted);margin-top:12px">🔒 Devis instantané · sans engagement</div>
+          <div style="text-align:center;font-size:12.5px;color:var(--muted);margin-top:12px">Devis instantané · sans engagement</div>
         </div>
       </aside>
     </div>
@@ -1346,7 +1344,7 @@ function renderPieces(){
     }).join('');
     return `<section style="margin-bottom:46px">
       <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:6px">
-        <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0;color:var(--ink)">${cat.icon} ${cat.label}</h2>
+        <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0;color:var(--ink)">${cat.label}</h2>
       </div>
       <p style="font-size:14.5px;color:var(--muted);margin:0 0 20px">${cat.intro}</p>
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px">${cards}</div>
@@ -1437,7 +1435,7 @@ function renderCart(){
           <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">TVA 20%</span><span style="font-weight:600;color:var(--ink)">${eur(T.tva)}</span></div>
           <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Livraison à domicile</span><span style="font-weight:600;color:var(--ink)">${T.livraison === 0 ? 'Offerte' : eur(T.livraison)}</span></div>
           ${T.flashActive ? `<div style="display:flex;justify-content:space-between"><span style="color:var(--accent)">Livraison Flash (+20%)</span><span style="font-weight:600;color:var(--accent)">${eur(T.flash)}</span></div>` : ''}
-          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Délai estimé</span><span style="font-weight:600;color:var(--ink)">${T.weeks} semaines${T.flashActive ? ' ⚡' : ''}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Délai estimé</span><span style="font-weight:600;color:var(--ink)">${T.weeks} semaines</span></div>
         </div>
         ${livraisonBanner}
         <div style="border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px">
@@ -1445,7 +1443,7 @@ function renderCart(){
           <span style="font-family:'Schibsted Grotesk',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.02em;color:var(--ink)">${eur(T.total)}</span>
         </div>
         <button onclick="goPayment()" class="neon-btn" style="width:100%;padding:16px;font-size:16px">Valider et payer →</button>
-        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;font-size:12.5px;color:var(--muted)">🔒 Paiement sécurisé · CB · Visa · Mastercard</div>
+        <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;font-size:12.5px;color:var(--muted)">Paiement sécurisé · CB · Visa · Mastercard</div>
       </aside>
     </div>
   </main>`;
@@ -1518,7 +1516,6 @@ function renderPayment(){
           <input value="${S.payName}" oninput="setPayName(event)" placeholder="Prénom Nom" style="width:100%;padding:13px;border:1px solid var(--line);border-radius:9px;font-size:15px;background:var(--section);color:var(--ink)">
         </div>
         <div style="display:flex;gap:11px;align-items:flex-start;background:var(--accent-soft);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--ink);line-height:1.5">
-          <span>🔒</span>
           <span>Vos informations sont chiffrées. À la validation, votre <strong>bon de commande</strong> est transmis automatiquement à notre atelier pour fabrication.</span>
         </div>
       </div>
@@ -1529,7 +1526,7 @@ function renderPayment(){
         ${T.canFlash ? `
         <div onclick="toggleFlash()" style="cursor:pointer;border:1.5px solid ${T.flashActive ? 'var(--accent)' : 'var(--line)'};background:${T.flashActive ? 'var(--accent-soft)' : 'var(--section)'};border-radius:12px;padding:14px 15px;margin-bottom:16px;transition:all .15s">
           <div style="display:flex;justify-content:space-between;align-items:center;gap:10px">
-            <span style="font-size:14px;font-weight:700;color:var(--ink)">⚡ Livraison Flash</span>
+            <span style="font-size:14px;font-weight:700;color:var(--ink)">Livraison Flash</span>
             <span style="width:42px;height:24px;border-radius:999px;background:${T.flashActive ? 'var(--accent)' : '#cdd2da'};position:relative;flex-shrink:0;transition:background .15s;display:inline-block"><span style="position:absolute;top:2px;left:${T.flashActive ? '20px' : '2px'};width:20px;height:20px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:left .15s"></span></span>
           </div>
           <p style="font-size:12px;color:var(--muted);margin:7px 0 0;line-height:1.45">Délai réduit à <strong style="color:var(--ink)">${DELAI_FLASH} semaines</strong> au lieu de ${T.baseWeeks} · supplément <strong style="color:var(--ink)">+20%</strong> (${eur(Math.round(T.sub*FLASH_PCT))})</p>
@@ -1537,7 +1534,7 @@ function renderPayment(){
         <div style="border-top:1px solid var(--line);padding-top:14px;display:flex;flex-direction:column;gap:8px;font-size:13.5px;margin-bottom:16px">
           <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Livraison</span><span style="color:var(--ink);font-weight:600">${T.livraison === 0 ? 'Offerte' : eur(T.livraison)}</span></div>
           ${T.flashActive ? `<div style="display:flex;justify-content:space-between"><span style="color:var(--accent)">Livraison Flash (+20%)</span><span style="color:var(--accent);font-weight:600">${eur(T.flash)}</span></div>` : ''}
-          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Délai estimé</span><span style="color:var(--ink);font-weight:600">${T.weeks} semaines${T.flashActive ? ' ⚡' : ''}</span></div>
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Délai estimé</span><span style="color:var(--ink);font-weight:600">${T.weeks} semaines</span></div>
           <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">dont TVA</span><span style="color:var(--ink);font-weight:600">${eur(T.tva)}</span></div>
         </div>
         <div style="border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px">
@@ -1615,7 +1612,7 @@ function renderConfirm(){
     </div>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:14px;color:var(--muted);margin-bottom:34px">
-      <span>📦 Délai estimé : <strong style="color:var(--ink)">${order.weeks||DELAI_MENUISERIE} semaines</strong> · livraison vers le <strong style="color:var(--ink)">${order.eta}</strong>${order.flash ? ` <span style="color:var(--accent);font-weight:700">⚡ Flash</span>` : ''}</span>
+      <span>Délai estimé : <strong style="color:var(--ink)">${order.weeks||DELAI_MENUISERIE} semaines</strong> · livraison vers le <strong style="color:var(--ink)">${order.eta}</strong>${order.flash ? ` <span style="color:var(--accent);font-weight:700">Flash</span>` : ''}</span>
     </div>
     <button onclick="goHome()" class="neon-btn" style="padding:14px 28px;font-size:15px">Retour à l'accueil</button>
   </main>`;
@@ -1799,7 +1796,7 @@ function renderLivraison(){
       <p style="font-size:14.5px;color:var(--muted);margin:0 0 8px">Calculés automatiquement selon le contenu de votre panier.</p>
       ${fraisRows}
       <div style="margin-top:18px;background:var(--accent-soft);color:var(--accent);font-size:14.5px;font-weight:700;padding:14px 16px;border-radius:12px;display:flex;align-items:center;gap:10px">
-        <span style="font-size:18px">🎁</span> Livraison <strong>offerte</strong> dès ${eur(LIVRAISON_SEUIL)} de commande.
+        Livraison <strong>offerte</strong> dès ${eur(LIVRAISON_SEUIL)} de commande.
       </div>
     </section>
 
@@ -1808,16 +1805,16 @@ function renderLivraison(){
       <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-size:22px;font-weight:800;letter-spacing:-.02em;margin:0 0 6px;color:var(--ink)">Délais de fabrication</h2>
       <p style="font-size:15px;color:var(--muted);margin:0 0 18px;max-width:680px">Tout est fabriqué sur-mesure : le délai court à compter de la validation de votre commande.</p>
       <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:18px">
-        ${delaiCard('🪟', 'Fenêtres &amp; volets', DELAI_MENUISERIE+' sem.', 'Délai standard pour toute commande de fenêtres et / ou volets roulants sur-mesure.')}
-        ${delaiCard('🔩', 'Pièces détachées', DELAI_PIECES+' sem.', 'Moteurs, kits, commandes et accessoires Bubendorff en commande seule.')}
-        ${delaiCard('⚡', 'Livraison Flash', DELAI_FLASH+' sem.', 'Délai raccourci à 3 semaines pour vos menuiseries, moyennant +20% du montant.')}
+        ${delaiCard('▦', 'Fenêtres &amp; volets', DELAI_MENUISERIE+' sem.', 'Délai standard pour toute commande de fenêtres et / ou volets roulants sur-mesure.')}
+        ${delaiCard('▥', 'Pièces détachées', DELAI_PIECES+' sem.', 'Moteurs, kits, commandes et accessoires Bubendorff en commande seule.')}
+        ${delaiCard('▸', 'Livraison Flash', DELAI_FLASH+' sem.', 'Délai raccourci à 3 semaines pour vos menuiseries, moyennant +20% du montant.')}
       </div>
     </section>
 
     <!-- livraison flash -->
     <section style="background:var(--ink);border-radius:18px;padding:34px 32px;margin-bottom:40px;display:flex;flex-wrap:wrap;gap:24px;align-items:center;justify-content:space-between">
       <div style="max-width:600px">
-        <div style="display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#cfe0ff;margin-bottom:10px">⚡ Option Livraison Flash</div>
+        <div style="display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:#cfe0ff;margin-bottom:10px">Option Livraison Flash</div>
         <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px;color:#fff">Besoin de vos menuiseries plus vite ?</h2>
         <p style="font-size:15.5px;color:rgba(255,255,255,.74);line-height:1.6;margin:0">Activez la <strong style="color:#fff">Livraison Flash</strong> à l'étape de paiement : votre délai passe de ${DELAI_MENUISERIE} à <strong style="color:#fff">${DELAI_FLASH} semaines</strong>, pour un supplément de <strong style="color:#fff">+20%</strong> du montant de la commande.</p>
       </div>
