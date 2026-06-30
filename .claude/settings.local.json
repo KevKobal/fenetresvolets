@@ -49,7 +49,8 @@
       "Bash(gh api *)",
       "Bash([ -f \"$f\" ])",
       "Bash(git commit *)",
-      "Bash(git push *)"
+      "Bash(git push *)",
+      "Bash(grep -oE \"\\(min-width|width\\):[0-9]{3,}px\" index.html)"
     ]
   }
 }
