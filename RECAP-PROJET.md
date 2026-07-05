@@ -4,8 +4,10 @@ Site e-commerce sur-mesure (volets roulants & fenêtres), 100 % autonome dans un
 `index.html` (HTML + JS vanilla, aucune dépendance, aucun build). Données réelles de marques
 récupérées en ligne, photos téléchargées en local dans `assets/`.
 
-Dernière mise à jour : 30 juin 2026 (fenêtres **PVC uniquement** — alu & bois retirés · nouvelle page
-**Aide à la mesure** inspirée de fenetre24.com, sans photos/vidéos pour l'instant).
+Dernière mise à jour : **5 juillet 2026** — mise en ligne du site sur **GitHub Pages**, passe
+**responsive** complète (mobile + desktop), retrait de **tous les émojis décoratifs**, liens du footer
+**Produits** rendus actifs, et **étude comparative du paiement sécurisé** (voir §11). Historique antérieur
+(30 juin) : fenêtres **PVC uniquement**, page **Aide à la mesure**.
 
 ---
 
@@ -22,6 +24,20 @@ Serveur configuré dans [.claude/launch.json](.claude/launch.json) :
 Le projet étant dans iCloud Drive, le serveur Python (`python3 -m http.server`) ne fonctionne pas :
 le sandbox macOS bloque `os.getcwd()` (`PermissionError: Operation not permitted`). Cette config a
 été retirée du `launch.json`. `npx serve` sert un chemin explicite et fonctionne.
+
+### Mise en ligne (GitHub Pages)
+
+Le site est **publié** et partageable :
+
+- **URL publique** : **https://kevkobal.github.io/fenetresvolets/**
+- **Dépôt** : [KevKobal/fenetresvolets](https://github.com/KevKobal/fenetresvolets) (public), remote `origin`, branche `main`.
+- **Déploiement** : GitHub Pages sert la racine du dépôt ; se redéploie seul ~1 min après chaque `git push`.
+- **Convention** : après **toute modif du site**, on fait `git add -A && git commit && git push` (auto-push, mémorisé).
+- **Mettre à jour manuellement** :
+  ```
+  cd "…/FenetresVolets.fr" && git add -A && git commit -m "maj" && git push
+  ```
+- Les **PDF de travail** (ex. comparatif paiement) sont **exclus du dépôt** via `.gitignore` (`*.pdf`).
 
 ---
 
@@ -298,12 +314,62 @@ Le site est passé d'une **base crème/chaude** à une **base blanche froide**, 
 
 ## 10. Pistes / à valider
 
-- [x] ~~**Responsive mobile**~~ — fait (hamburger + grilles fluides, voir §8). Reste à fignoler :
-      vérifier panier/paiement sur très petits écrans.
+- [x] ~~**Responsive mobile**~~ — fait + **passe complète mobile/desktop** (voir §11).
 - [x] ~~Configurateur **en étapes numérotées** avec progression~~ — fait (voir §8)
 - [x] ~~**Mini-panier déroulant** au survol~~ — fait (voir §8)
 - [x] ~~Page **Aide à la mesure**~~ — fait (écran `aide`, inspiré fenetre24.com, voir §9)
+- [x] ~~**Mise en ligne** partageable~~ — fait (GitHub Pages, voir §1)
+- [ ] **Paiement sécurisé réel** — en cours de décision (voir §11). Prérequis : choix hébergeur (statique vs
+      serveur qui exécute du code), choix prestataire (Stripe recommandé), **pages légales** CGV / Mentions /
+      RGPD à rédiger, remplacer le **formulaire CB factice** par une page/widget hébergé (Stripe Checkout/Elements).
 - [ ] **Photos / schémas / vidéos** de la page Aide à la mesure (volontairement absents pour l'instant)
 - [ ] Logo **Caloriver** dédié (détourer le GIF, ou fournir un SVG/PNG transparent)
 - [ ] Derniers placeholders « photo — » restants (galerie inspiration)
 - [ ] Variantes électriques Bubendorff (radio/filaire/CLIMAT+) au catalogue, si souhaité
+
+---
+
+## 11. Journal — session du 5 juillet 2026
+
+### Mise en ligne
+- Dépôt Git initialisé et publié sur **GitHub Pages** (voir §1 pour l'URL et la procédure de mise à jour).
+- Convention **auto-push** après chaque modif du site.
+
+### Passe responsive (mobile + desktop)
+Bug de fond identifié : plusieurs grilles à **colonne latérale de largeur fixe** n'étaient pas couvertes par
+les media queries → le contenu partait hors écran sur mobile (masqué par `overflow-x:hidden`, donc invisible
+à l'audit automatique). Corrigé dans le bloc `@media` :
+- **Panier** (`1fr 350px`) et **Paiement** (`1fr 330px`) → récap repasse en **pleine largeur** sous le contenu.
+- **Footer** : `1.4fr 1fr 1fr 1fr` → **2 col ≤820px**, puis **1 col ≤560px** (sinon l'e-mail
+  `contact@mesfenetresvolets.fr` était **coupé**) ; ajout `overflow-wrap:anywhere` sur l'e-mail.
+- **Galerie photos** Kömmerling (`repeat(6,1fr)`) → 3 col (≤1024px) / 2 col (≤560px).
+- **Barre d'action** collante du configurateur : padding réduit (`12px 32px` → `11px 14px`) ≤560px.
+- Vitrines produit (`1.05fr .95fr`) et galerie inspiration (`2fr 1fr 1fr`) repassent en 1 col.
+- Vérifié : **aucun débordement horizontal** sur les 8 écrans à 375px ; layout desktop intact à 1280px.
+
+### Footer
+- **Numéro de téléphone retiré** (rubrique Contact = e-mail seul).
+- Liens **Produits** rendus actifs : Volets roulants → `pickProduct('volet')`, Fenêtre PVC →
+  `pickProduct('fenetre')`, Pièces détachées → `goPieces()` (avec `cursor:pointer`).
+- Légende carrousel usine : « Usine en **Meurthe-et-Moselle (Grand-Est)** ».
+
+### Retrait des émojis décoratifs
+Tous les **émojis couleur** supprimés (⚙️ 🧰 📱 🔩 📷 🔒 ⚡ 📦 🎁 🪟) : icônes catégories pièces
+(`PIECES[*].icon=''`), cartes d'accueil « deux façons de commander », bouton configurateur, notes
+panier/paiement/confirmation, page Livraison. **Conservés** (ce ne sont pas des émojis) : flèches → ←,
+coches ✓, croix ✕, et les **glyphes typographiques monochromes** du design (⬡ ⌂ ✦ ▣ ▤ ▥ ; le 🔒 du bandeau
+« Paiement sécurisé » remplacé par **◆** ; badges délais Livraison par **▦ ▥ ▸**). Reste un `⚠️` dans un
+**commentaire de code** (non affiché).
+
+### Étude paiement sécurisé (décision en cours)
+- Le formulaire CB actuel est **factice** ; un vrai paiement impose un prestataire agréé (PCI-DSS) + 3-D Secure (DSP2).
+- Contrainte : prix **sur-mesure calculés côté navigateur** → à **revalider** (lien/facture, ou côté serveur).
+- **2 routes** : **A** = devis → **lien/facture** (sans serveur, reste sur Pages) ✅ pour démarrer ;
+  **B** = **Checkout intégré** (paiement auto instantané) → nécessite un backend / hébergeur qui exécute du code.
+- **Si le futur hébergeur exécute du code** (PHP le plus probable sur mutualisé FR) → Route B possible :
+  recalcul du prix côté serveur, clé secrète cachée, webhook de confirmation.
+- Prestataires comparés : **Stripe** (recommandé), PayPal, Mollie, PayPlug (FR), Stancer (FR), SumUp,
+  Lyra/Systempay (banque), Lemonway (marketplace, surdimensionné).
+- Livrable : **`Paiement-securise-comparatif.pdf`** (racine, exclu du dépôt) — comparatif complet + reco.
+- **À faire avant d'encaisser** : pages légales **CGV / Mentions légales / RGPD** (liens footer vides), et
+  remplacer le formulaire CB par Stripe Checkout/Elements.
