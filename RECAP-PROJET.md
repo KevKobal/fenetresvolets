@@ -4,10 +4,11 @@ Site e-commerce sur-mesure (volets roulants & fenêtres), 100 % autonome dans un
 `index.html` (HTML + JS vanilla, aucune dépendance, aucun build). Données réelles de marques
 récupérées en ligne, photos téléchargées en local dans `assets/`.
 
-Dernière mise à jour : **5 juillet 2026** — mise en ligne du site sur **GitHub Pages**, passe
-**responsive** complète (mobile + desktop), retrait de **tous les émojis décoratifs**, liens du footer
-**Produits** rendus actifs, et **étude comparative du paiement sécurisé** (voir §11). Historique antérieur
-(30 juin) : fenêtres **PVC uniquement**, page **Aide à la mesure**.
+Dernière mise à jour : **8 juillet 2026** — **audit sécurité & cohérence complet** + lot de correctifs
+(voir §12) : **mode démonstration** (bandeau + paiement CB désactivé via `DEMO`), **polices auto-hébergées**
+(RGPD, plus aucun appel Google), meta **SEO/Open Graph**, ventilation panier corrigée, badge panier en
+quantités, « dès 275 €/m² », sens d'ouverture masqué si châssis fixe. Historique : 5 juillet — GitHub Pages,
+passe responsive, retrait émojis, étude paiement (§11) ; 30 juin — PVC uniquement, page Aide à la mesure.
 
 ---
 
@@ -205,10 +206,10 @@ Grille réduite à **3 produits** (sur demande, retrait du « Volet électrique 
 > Le volet électrique radio reste disponible dans le **configurateur** (motorisation radio) ; il a
 > seulement été retiré de la vitrine d'accueil.
 >
-> ⚠️ **Plus aucune fenêtre en aluminium** : l'option matériau « Aluminium » a été **retirée du
-> configurateur fenêtre** (sur demande). Matériaux restants : **PVC Kömmerling** et **Bois**. Le footer
-> liste « Fenêtre PVC ». (Les mappings `matiereName`/prix gardent l'entrée `alu` de façon défensive pour
-> d'éventuelles données existantes, mais elle n'est plus proposée.)
+> ⚠️ **Plus aucune fenêtre en aluminium ni en bois** : seuls le **PVC Kömmerling** est proposé au
+> configurateur fenêtre (voir §2 — le Bois a lui aussi été retiré). Le footer liste « Fenêtre PVC ».
+> (Les mappings `matiereName`/prix gardent l'entrée `alu` de façon défensive pour d'éventuelles
+> données existantes, mais elle n'est plus proposée.)
 
 ---
 
@@ -220,8 +221,9 @@ Grille réduite à **3 produits** (sur demande, retrait du « Volet électrique 
 | `assets/pieces/` | 16 pièces Bubendorff (moteurs, kits, commandes, adaptations) | moteur-volet-roulant.fr |
 | `assets/kommerling/` | 13 photos Kömmerling 76 (profilés, coupes, intérieur/extérieur, coloris, ferrures, façade) | fenetre24.com |
 | `assets/Fabrication Fr/` | 3 photos d'usine : Usine, Usine 1, Usine 2 (carrousel savoir-faire) | fournies par l'utilisateur |
-| `assets/usine/` | 5 photos d'usine Bubendorff (anciennes, non utilisées actuellement) | bubendorff.com |
-| `assets/logos/` | 4 logos : bubendorff.svg, kommerling.png, siegenia.svg, caloriver.svg (= Calorigroup) | sites officiels |
+| `assets/usine/` | 3 photos d'usine Bubendorff (anciennes, non utilisées actuellement) | bubendorff.com |
+| `assets/fonts/` | 4 polices variables woff2 auto-hébergées : Schibsted Grotesk + Hanken Grotesk (latin & latin-ext) | Google Fonts (téléchargées le 8 juil.) |
+| `assets/logos/` | logos : bubendorff.svg, kommerling.png, siegenia.svg, caloriver.svg (= Calorigroup), VERRISSIMA-GROUPE.jpg.webp, logo-mfv.png (+ source 4k) | sites officiels |
 | `Volet roulant Bubendorff.jpg` (racine) | détourage produit volet anthracite (non utilisé — inadapté au hero) | fournie par l'utilisateur |
 
 ---
@@ -319,9 +321,13 @@ Le site est passé d'une **base crème/chaude** à une **base blanche froide**, 
 - [x] ~~**Mini-panier déroulant** au survol~~ — fait (voir §8)
 - [x] ~~Page **Aide à la mesure**~~ — fait (écran `aide`, inspiré fenetre24.com, voir §9)
 - [x] ~~**Mise en ligne** partageable~~ — fait (GitHub Pages, voir §1)
-- [ ] **Paiement sécurisé réel** — en cours de décision (voir §11). Prérequis : choix hébergeur (statique vs
-      serveur qui exécute du code), choix prestataire (Stripe recommandé), **pages légales** CGV / Mentions /
-      RGPD à rédiger, remplacer le **formulaire CB factice** par une page/widget hébergé (Stripe Checkout/Elements).
+- [ ] **Paiement sécurisé réel** — en cours de décision (voir §11 et audit §12). Prérequis : choix hébergeur
+      (statique vs serveur qui exécute du code), choix prestataire (Stripe recommandé), **pages légales** CGV /
+      Mentions / RGPD à rédiger, remplacer le **formulaire CB factice** par une page/widget hébergé (Stripe
+      Checkout/Elements). En attendant : **mode démo actif** (`DEMO=true`, bandeau + CB désactivée, voir §12).
+- [ ] **Domaine `mesfenetresvolets.fr` à enregistrer** (~10 €/an) — priorité audit : tant qu'il n'est pas déposé,
+      n'importe qui peut l'acheter et recevoir les e-mails `contact@`.
+- [ ] **Formulaires « rappel » / « aide » à brancher** (rien n'est transmis actuellement) — Netlify Forms ou backend.
 - [ ] **Photos / schémas / vidéos** de la page Aide à la mesure (volontairement absents pour l'instant)
 - [ ] Logo **Caloriver** dédié (détourer le GIF, ou fournir un SVG/PNG transparent)
 - [ ] Derniers placeholders « photo — » restants (galerie inspiration)
@@ -373,3 +379,49 @@ coches ✓, croix ✕, et les **glyphes typographiques monochromes** du design (
 - Livrable : **`Paiement-securise-comparatif.pdf`** (racine, exclu du dépôt) — comparatif complet + reco.
 - **À faire avant d'encaisser** : pages légales **CGV / Mentions légales / RGPD** (liens footer vides), et
   remplacer le formulaire CB par Stripe Checkout/Elements.
+
+---
+
+## 12. Journal — session du 8 juillet 2026 (audit + correctifs)
+
+### Audit sécurité & cohérence (contrôle complet du site)
+Constats principaux : **faux paiement sur site public** (textes mensongers « informations chiffrées »,
+« e-mail envoyé », « bon de commande transmis »), **formulaires qui ne transmettent rien** (rappel, aide),
+**Google Fonts** = transfert d'IP à Google (RGPD), **pages légales absentes**, self-XSS mineur sur
+`payName`, ventilation HT/TVA du panier fausse (livraison comptée 2×), badge panier ≠ quantités,
+« 260 €/m² » obsolète, sens d'ouverture proposé sur châssis fixe, SEO nul (pas de meta/OG).
+Propositions hébergement (Netlify/Cloudflare Pages ou mutualisé FR o2switch/OVH) et paiement
+(Route A liens Stripe → Route B Checkout + fonction serverless) détaillées en conversation + PDF §11.
+
+### Correctifs appliqués (lot 1)
+- **Mode démonstration** : constante **`DEMO = true`** (en tête des CONSTANTS, à passer à `false` au
+  lancement réel). Effets : **bandeau ambre** site-wide au-dessus du header (« Site de démonstration —
+  les commandes et paiements ne sont pas encore actifs. »), **champs CB `disabled`** (+ carte à
+  `opacity:.55`), encart honnête ambre (#FEF3C7) à la place de « Vos informations sont chiffrées… »,
+  bouton **« Paiement bientôt disponible »** désactivé (l'écran `confirm` devient inatteignable en démo).
+  Les coordonnées client restent saisissables ; `autocomplete="off"` ajouté aux champs CB.
+- **Polices auto-hébergées (RGPD)** : les 3 `<link>` Google Fonts remplacés par 4 `@font-face` locaux →
+  `assets/fonts/*.woff2` (Schibsted Grotesk 400–800, Hanken Grotesk 400–700, variables, latin +
+  latin-ext, ~120 Ko). **Zéro requête externe** vérifiée au runtime (performance API).
+- **SEO** : `<meta name="description">` + Open Graph (title/description/type/url/image/locale).
+- **Panier — ventilation corrigée** : « Sous-total TTC » (= articles), Livraison, Flash éventuel, Délai,
+  **« dont TVA 20% »** (au lieu de « Sous-total HT » = total/1,2 livraison incluse + ligne Livraison en
+  double). Sous-total + Livraison + Flash = Total ✓ (harmonisé avec la page Paiement).
+- **Badge panier = somme des quantités** (`cartQty`) dans le header, le menu fluide et « X article(s) »
+  de la page panier (avant : nombre de lignes ; incohérent avec le mini-panier).
+- **`payName` échappé** (`&quot;`) à la réinjection — self-XSS clos, homogène avec les autres champs.
+- **« dès 275 €/m² »** sur la carte Matériau PVC du configurateur (au lieu de « 260 €/m² », reliquat).
+- **Sens d'ouverture masqué si châssis fixe** (grille 1 col dans les Finitions fenêtre).
+- RECAP corrigé : §5 (PVC uniquement, plus de « Bois »), §6 (3 photos usine, ligne `assets/fonts/`).
+
+### Vérifié au runtime (npx serve + navigateur)
+Zéro erreur console · zéro 404 · zéro requête externe · polices locales chargées (`document.fonts.check` ✓)
+· bandeau démo affiché · 4 champs CB désactivés, 7 champs client actifs · bouton payer désactivé ·
+panier : 1 566 € + 109 € = 1 675 € ✓, badge = 3 = « 3 article(s) » ✓ · « dès 275 €/m² » ✓ · sens masqué ✓.
+
+### Reste à faire (issu de l'audit, non traité dans ce lot)
+- Enregistrer le **domaine** + boîte `contact@` (remplacer `CONTACT_EMAIL`).
+- **Pages légales** CGV (avec exclusion rétractation sur-mesure, art. L221-28 3°) / Mentions / RGPD.
+- Brancher les **formulaires** (Netlify Forms recommandé) — rappel & aide.
+- Année dans la date de livraison estimée (`eta`) ; clarifier « Garantie 2 ans » vs garanties fabricant ;
+  encadrer l'usage des logos « marques partenaires » (Siegenia, Verrissima) avant commercialisation.

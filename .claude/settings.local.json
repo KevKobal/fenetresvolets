@@ -55,7 +55,15 @@
       "Bash(pip install *)",
       "Bash(python3 -m pip install --quiet reportlab)",
       "Bash(python3 gen_pdf.py)",
-      "Bash(git check-ignore *)"
+      "Bash(git check-ignore *)",
+      "Bash(grep -oE '\\\\$\\\\{ASSET\\\\}[^\"]*' index.html)",
+      "Bash(mkdir -p assets/fonts)",
+      "Bash(curl -s -A \"Mozilla/5.0 \\(Macintosh; Intel Mac OS X 10_15_7\\) AppleWebKit/537.36 \\(KHTML, like Gecko\\) Chrome/126.0 Safari/537.36\" \"https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400..800&family=Hanken+Grotesk:wght@400..700&display=swap\" -o /tmp/gfonts.css)",
+      "Bash(curl -s -o hanken-grotesk-latin-ext.woff2 \"https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpT59CxCis4UvI.woff2\")",
+      "Bash(curl -s -o hanken-grotesk-latin.woff2 \"https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2\")",
+      "Bash(curl -s -o schibsted-grotesk-latin-ext.woff2 \"https://fonts.gstatic.com/s/schibstedgrotesk/v7/Jqz55SSPQuCQF3t8uOwiUL-taUTtap9IayojdSFOd1I.woff2\")",
+      "Bash(curl -s -o schibsted-grotesk-latin.woff2 \"https://fonts.gstatic.com/s/schibstedgrotesk/v7/Jqz55SSPQuCQF3t8uOwiUL-taUTtap9GayojdSFO.woff2\")",
+      "Bash(file *.woff2)"
     ]
   }
 }
