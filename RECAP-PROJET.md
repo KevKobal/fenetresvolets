@@ -322,9 +322,11 @@ Le site est passé d'une **base crème/chaude** à une **base blanche froide**, 
 - [x] ~~Page **Aide à la mesure**~~ — fait (écran `aide`, inspiré fenetre24.com, voir §9)
 - [x] ~~**Mise en ligne** partageable~~ — fait (GitHub Pages, voir §1)
 - [ ] **Paiement sécurisé réel** — en cours de décision (voir §11 et audit §12). Prérequis : choix hébergeur
-      (statique vs serveur qui exécute du code), choix prestataire (Stripe recommandé), **pages légales** CGV /
-      Mentions / RGPD à rédiger, remplacer le **formulaire CB factice** par une page/widget hébergé (Stripe
-      Checkout/Elements). En attendant : **mode démo actif** (`DEMO=true`, bandeau + CB désactivée, voir §12).
+      (statique vs serveur qui exécute du code), choix prestataire (Stripe recommandé), remplacer le **formulaire
+      CB factice** par une page/widget hébergé (Stripe Checkout/Elements). En attendant : **mode démo actif**
+      (`DEMO=true`, bandeau + CB désactivée, voir §12).
+- [x] ~~**Pages légales** CGV / Mentions / RGPD~~ — **rédigées en version préparatoire** (8 juil., voir §12) ;
+      reste à renseigner les champs `[À compléter]` (SIRET, raison sociale, médiateur…) et faire relire.
 - [ ] **Domaine `mesfenetresvolets.fr` à enregistrer** (~10 €/an) — priorité audit : tant qu'il n'est pas déposé,
       n'importe qui peut l'acheter et recevoir les e-mails `contact@`.
 - [ ] **Formulaires « rappel » / « aide » à brancher** (rien n'est transmis actuellement) — Netlify Forms ou backend.
@@ -425,3 +427,25 @@ panier : 1 566 € + 109 € = 1 675 € ✓, badge = 3 = « 3 article(s) » ✓
 - Brancher les **formulaires** (Netlify Forms recommandé) — rappel & aide.
 - Année dans la date de livraison estimée (`eta`) ; clarifier « Garantie 2 ans » vs garanties fabricant ;
   encadrer l'usage des logos « marques partenaires » (Siegenia, Verrissima) avant commercialisation.
+
+### Pages légales (8 juillet 2026, suite de session)
+- **`CONTACT_EMAIL` officialisé** : `contact@mesfenetresvolets.fr` (confirmé par Kevin — plus un placeholder).
+- **3 nouveaux écrans** routés dans `_render` : `mentions` (`renderMentions`, 5 sections), `cgv`
+  (`renderCGV`, 12 articles), `confidentialite` (`renderConfidentialite`, 7 sections). Nav :
+  `goMentions()/goCGV()/goConfidentialite()`.
+- **Helpers** : `legalShell` (fil d'Ariane + en-tête + bandeau « Document préparatoire » + boutons croisés),
+  `legalSec` (carte de section), `phFill(t)` (balise ambre `[À compléter : …]` pour les infos manquantes :
+  raison sociale, SIRET, capital, TVA, directeur de publication, médiateur, prestataire de paiement).
+  Constante `LEGAL_MAJ` (date de dernière mise à jour affichée).
+- **Contenu clé** : hébergeur GitHub Inc. (à maj si changement) · marques tierces citées à titre informatif ·
+  CGV avec frais/délais **dynamiques** (constantes `FRAIS_*`, `DELAI_*`, `FLASH_PCT` → toujours en phase avec
+  le site) · **rétractation** : exclue pour le sur-mesure (L221-28 3°), 14 jours pour les pièces détachées ·
+  encadré garantie légale de conformité · médiation L612-1 + plateforme ODR · RGPD : bases légales, durées
+  (3 ans prospects / 10 ans comptable), droits + CNIL, **aucun cookie**, note de transparence « démo :
+  rien n'est transmis ni stocké ».
+- **Liens d'accès** : footer bas de page (Mentions légales · CGV · Confidentialité, cliquables), note RGPD
+  sous le formulaire de rappel, note RGPD sous « Vos coordonnées » (paiement), « vous acceptez nos CGV »
+  sous le bouton payer. Les CGV affichent aussi l'encart « site en démonstration ».
+- Vérifié au runtime : 0 erreur console, 3 pages rendues, liens footer actifs, frais/délais dynamiques OK.
+- ⚠️ **Avant l'ouverture des ventes** : renseigner tous les `[À compléter]`, désigner un médiateur de la
+  consommation, faire relire par un professionnel du droit.

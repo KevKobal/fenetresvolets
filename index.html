@@ -168,7 +168,7 @@ const DELAI_MENUISERIE = 6;     // semaines — fenêtres / volets
 const DELAI_PIECES = 3;         // semaines — pièces détachées
 const DELAI_FLASH = 3;          // semaines — option Livraison Flash
 const FLASH_PCT = 0.20;         // supplément Livraison Flash (% du sous-total)
-const CONTACT_EMAIL = 'contact@mesfenetresvolets.fr'; // ⚠️ TODO : remplacer par l'adresse de contact fournie
+const CONTACT_EMAIL = 'contact@mesfenetresvolets.fr'; // adresse de contact officielle (confirmée le 8 juillet 2026)
 const GARANTIE = 2;
 const DEMO = true;              // site de démonstration : bandeau affiché + paiement CB désactivé (passer à false au lancement réel)
 
@@ -415,6 +415,9 @@ function goPayment(){ go('payment'); }
 function goPieces(){ go('pieces'); }
 function goAide(){ go('aide'); }
 function goLivraison(){ go('livraison'); }
+function goMentions(){ go('mentions'); }
+function goCGV(){ go('cgv'); }
+function goConfidentialite(){ go('confidentialite'); }
 function toggleFlash(){ S.flash = !S.flash; render(); }
 function toggleNav(){ S.navOpen = !S.navOpen; render(); }
 
@@ -999,7 +1002,7 @@ function renderHome(){
       </div>
       <div style="border-top:1px solid var(--line);padding:18px 32px;max-width:1240px;margin:0 auto;font-size:13px;color:var(--muted);display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px">
         <span>© 2026 mesfenetresvolets.fr — Tous droits réservés</span>
-        <span>Mentions légales · CGV · Paiement sécurisé</span>
+        <span><span onclick="goMentions()" style="cursor:pointer">Mentions légales</span> · <span onclick="goCGV()" style="cursor:pointer">CGV</span> · <span onclick="goConfidentialite()" style="cursor:pointer">Confidentialité</span></span>
       </div>
     </footer>
   </main>`;
@@ -1483,6 +1486,7 @@ function renderPayment(){
       <div style="margin-bottom:16px">${fld('adresse','Adresse','12 rue des Lilas')}</div>
       <div style="display:grid;grid-template-columns:1fr 2fr;gap:16px;margin-bottom:16px">${fld('cp','Code postal','75001','inputmode=numeric')}${fld('ville','Ville','Paris')}</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">${fld('tel','Téléphone','06 12 34 56 78','inputmode=tel')}${fld('mail','E-mail','jean.dupont@email.fr','inputmode=email')}</div>
+      <p style="font-size:12px;color:var(--muted);margin:14px 0 0;line-height:1.5">Ces informations sont nécessaires au traitement et à la livraison de votre commande — voir notre <span onclick="goConfidentialite()" style="color:var(--accent);cursor:pointer">politique de confidentialité</span>.</p>
     </div>`;
   const errBanner = err ? `<div style="background:#fdecea;border:1px solid #f3b5b0;color:#a3322b;font-size:13.5px;font-weight:600;padding:12px 16px;border-radius:10px;margin-bottom:18px">Merci de compléter vos coordonnées et vos informations de paiement (champs en rouge).</div>` : '';
 
@@ -1561,6 +1565,7 @@ function renderPayment(){
         <button disabled class="neon-btn" style="width:100%;padding:16px;font-size:16px;opacity:.45;pointer-events:none">Paiement bientôt disponible</button>
         <div style="text-align:center;font-size:12.5px;color:var(--muted);margin-top:10px">Démonstration — aucun paiement n'est encaissé.</div>` : `
         <button onclick="onPay()" class="neon-btn" style="width:100%;padding:16px;font-size:16px">Payer ${eur(T.total)}</button>`}
+        <div style="text-align:center;font-size:12px;color:var(--muted);margin-top:10px">En validant votre commande, vous acceptez nos <span onclick="goCGV()" style="color:var(--accent);cursor:pointer">CGV</span>.</div>
       </aside>
     </div>
   </main>`;
@@ -1594,6 +1599,7 @@ function renderCallback(){
       ${err ? `<div style="color:#a3322b;font-size:13px;font-weight:600;margin-bottom:16px">Merci d'indiquer un numéro de téléphone valide.</div>` : ''}
       <button onclick="sendCallback()" class="neon-btn" style="width:100%;padding:15px;font-size:16px">Être rappelé →</button>
       <div style="text-align:center;font-size:12.5px;color:var(--muted);margin-top:12px">⏱ Rappel sous 24 h ouvrées · gratuit &amp; sans engagement</div>
+      <div style="text-align:center;font-size:12px;color:var(--muted);margin-top:8px">Vos données servent uniquement à vous recontacter — <span onclick="goConfidentialite()" style="color:var(--accent);cursor:pointer">politique de confidentialité</span></div>
     </div>
   </main>`;
 }
@@ -1854,6 +1860,207 @@ function renderLivraison(){
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// PAGES LÉGALES — Mentions légales · CGV · Politique de confidentialité (RGPD)
+// Champs manquants (SIRET, raison sociale…) balisés [À compléter] via phFill().
+// ─────────────────────────────────────────────────────────────────────────────
+const LEGAL_MAJ = '8 juillet 2026';
+
+function phFill(t){ return `<mark style="background:#FEF3C7;color:#78350F;padding:1px 7px;border-radius:5px;font-weight:600;font-style:normal">[À compléter : ${t}]</mark>`; }
+
+const legalTodoBanner = `
+  <div style="background:#FEF3C7;border:1px solid #FCD34D;border-radius:12px;padding:14px 16px;font-size:13.5px;color:#78350F;line-height:1.55;margin-bottom:22px">
+    <strong>Document préparatoire</strong> — les champs surlignés doivent être renseignés (raison sociale, SIRET, médiateur…)
+    et le tout relu par un professionnel du droit <strong>avant l'ouverture des commandes</strong>.
+  </div>`;
+
+function legalSec(title, html){
+  return `<section style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:24px 26px;margin-bottom:14px">
+    <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-size:19px;font-weight:700;letter-spacing:-.01em;margin:0 0 12px;color:var(--ink)">${title}</h2>
+    <div style="font-size:14.5px;line-height:1.7;color:var(--muted)">${html}</div>
+  </section>`;
+}
+
+function legalShell(crumb, tag, title, body){
+  return `<main class="anim" style="max-width:880px;margin:0 auto;padding:34px 32px 80px">
+    <div style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);margin-bottom:20px">
+      <span onclick="goHome()" style="cursor:pointer">Accueil</span><span>/</span>
+      <span style="color:var(--ink);font-weight:600">${crumb}</span>
+    </div>
+    <header style="margin-bottom:24px">
+      <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:12px">${tag}</div>
+      <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-size:clamp(28px,4.6vw,42px);font-weight:800;letter-spacing:-.025em;line-height:1.05;margin:0 0 10px;color:var(--ink)">${title}</h1>
+      <p style="font-size:13.5px;color:var(--muted);margin:0">Dernière mise à jour : ${LEGAL_MAJ}</p>
+    </header>
+    ${legalTodoBanner}
+    ${body}
+    <div style="margin-top:28px;display:flex;gap:10px;flex-wrap:wrap">
+      <button onclick="goMentions()" class="neon-btn" style="padding:11px 18px;font-size:13.5px">Mentions légales</button>
+      <button onclick="goCGV()" class="neon-btn" style="padding:11px 18px;font-size:13.5px">CGV</button>
+      <button onclick="goConfidentialite()" class="neon-btn" style="padding:11px 18px;font-size:13.5px">Confidentialité</button>
+    </div>
+  </main>`;
+}
+
+function renderMentions(){
+  const P = `<p style="margin:0 0 10px">`;
+  return legalShell('Mentions légales', 'Informations légales (LCEN)', 'Mentions légales', `
+    ${legalSec('1. Éditeur du site', `
+      ${P}Le site <strong style="color:var(--ink)">mesfenetresvolets.fr</strong> (le « Site ») est édité par :</p>
+      ${P}${phFill('raison sociale')}, ${phFill('forme juridique — SARL, SAS, EI…')}, au capital de ${phFill('capital social')},
+      immatriculée au RCS de ${phFill('ville du RCS')} sous le numéro ${phFill('SIREN / SIRET')},
+      dont le siège social est situé ${phFill('adresse du siège')}.</p>
+      ${P}N° de TVA intracommunautaire : ${phFill('n° TVA')}.</p>
+      ${P}Directeur de la publication : ${phFill('nom du directeur de la publication')}.</p>
+      ${P}Contact : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a></p>`)}
+    ${legalSec('2. Hébergement', `
+      ${P}Le Site est hébergé par <strong style="color:var(--ink)">GitHub, Inc.</strong> (service GitHub Pages) —
+      88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis —
+      <a href="https://pages.github.com" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">pages.github.com</a>.</p>
+      ${P}<em>(Section à mettre à jour en cas de changement d'hébergeur.)</em></p>`)}
+    ${legalSec('3. Propriété intellectuelle', `
+      ${P}L'ensemble des éléments du Site (textes, mise en page, logo mesfenetresvolets.fr, code) est protégé par le droit
+      de la propriété intellectuelle. Toute reproduction non autorisée constitue une contrefaçon.</p>
+      ${P}Les marques, logos et visuels <strong style="color:var(--ink)">Bubendorff</strong>, <strong style="color:var(--ink)">Kömmerling</strong>,
+      <strong style="color:var(--ink)">Siegenia</strong> et <strong style="color:var(--ink)">Verrissima</strong> cités sur le Site appartiennent
+      à leurs titulaires respectifs ; ils sont mentionnés à des fins d'information sur l'origine et les caractéristiques des produits.
+      Les photographies de produits proviennent des fabricants et de leurs distributeurs.</p>`)}
+    ${legalSec('4. Données personnelles & cookies', `
+      ${P}Le traitement des données personnelles est décrit dans notre
+      <span onclick="goConfidentialite()" style="color:var(--accent);font-weight:600;cursor:pointer">Politique de confidentialité</span>.</p>
+      ${P}Le Site n'utilise <strong style="color:var(--ink)">aucun cookie ni traceur</strong>.</p>`)}
+    ${legalSec('5. Signalement', `
+      ${P}Pour signaler un contenu ou poser une question relative au Site :
+      <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a></p>`)}
+  `);
+}
+
+function renderCGV(){
+  const P = `<p style="margin:0 0 10px">`;
+  const demoNote = `
+    <div style="background:var(--accent-soft);border:1px solid var(--line);border-radius:12px;padding:14px 16px;font-size:13.5px;color:var(--ink);line-height:1.55;margin-bottom:22px">
+      Le Site est actuellement en <strong>démonstration</strong> : aucune commande ni aucun paiement ne sont acceptés.
+      Les présentes conditions entreront en vigueur à l'ouverture des commandes.
+    </div>`;
+  return legalShell('CGV', 'Conditions générales de vente', 'Conditions générales de vente', demoNote + `
+    ${legalSec('Article 1 — Objet et champ d\'application', `
+      ${P}Les présentes conditions générales de vente (« CGV ») régissent les ventes conclues sur le site
+      <strong style="color:var(--ink)">mesfenetresvolets.fr</strong> entre le vendeur identifié à l'article 2 et tout client
+      consommateur ou non professionnel (le « Client »). Toute commande vaut acceptation sans réserve des CGV en vigueur
+      au jour de la commande.</p>`)}
+    ${legalSec('Article 2 — Vendeur', `
+      ${P}${phFill('raison sociale')} — ${phFill('SIREN / SIRET')} — ${phFill('adresse du siège')} —
+      contact : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a>.</p>`)}
+    ${legalSec('Article 3 — Produits', `
+      ${P}Le Site propose : <strong style="color:var(--ink)">(a)</strong> des volets roulants et fenêtres
+      <strong style="color:var(--ink)">fabriqués sur mesure</strong> selon les dimensions, coloris et options choisis par le Client
+      dans le configurateur ; <strong style="color:var(--ink)">(b)</strong> des <strong style="color:var(--ink)">pièces détachées et
+      accessoires standard</strong> (moteurs, kits, commandes, adaptations).</p>
+      ${P}Le Client est seul responsable de l'exactitude des mesures et choix saisis dans le configurateur. Un guide
+      « Aide à la mesure » est mis à disposition ; en cas de doute, le Client est invité à se faire accompagner avant de commander.</p>`)}
+    ${legalSec('Article 4 — Prix', `
+      ${P}Les prix sont exprimés en euros, <strong style="color:var(--ink)">toutes taxes comprises</strong> (TVA 20 %).
+      Les frais de livraison sont indiqués avant la validation de la commande (article 7). Le vendeur se réserve le droit de
+      modifier ses prix à tout moment ; les produits sont facturés au tarif en vigueur au moment de la validation de la commande.</p>`)}
+    ${legalSec('Article 5 — Commande', `
+      ${P}Étapes : configuration ou choix des produits → panier → saisie des coordonnées → paiement → confirmation.
+      La commande n'est définitive qu'après encaissement du paiement et envoi d'un e-mail de confirmation.</p>
+      ${P}Pour les produits sur mesure, le vendeur peut contacter le Client pour vérifier les cotes avant lancement
+      en fabrication. En cas d'incohérence manifeste, la commande peut être suspendue le temps de la vérification.</p>`)}
+    ${legalSec('Article 6 — Paiement', `
+      ${P}Le paiement s'effectue en ligne par carte bancaire via un prestataire de paiement sécurisé
+      (authentification 3-D Secure). Les données bancaires ne transitent jamais par le Site. ${phFill('nom du prestataire de paiement — ex. Stripe')}</p>
+      ${P}Le Site étant en démonstration, aucun moyen de paiement n'est actuellement actif.</p>`)}
+    ${legalSec('Article 7 — Livraison et délais', `
+      ${P}Livraison à domicile en France métropolitaine. Frais selon le contenu du panier :
+      <strong style="color:var(--ink)">${eur(FRAIS_PIECES)}</strong> (pièces détachées seules) ·
+      <strong style="color:var(--ink)">${eur(FRAIS_1)}</strong> (1 fenêtre ou 1 volet) ·
+      <strong style="color:var(--ink)">${eur(FRAIS_PLUS)}</strong> (2 menuiseries ou plus) ·
+      <strong style="color:var(--ink)">offerte</strong> dès ${eur(LIVRAISON_SEUIL)} de commande.</p>
+      ${P}Délais indicatifs à compter de la validation : <strong style="color:var(--ink)">${DELAI_MENUISERIE} semaines</strong>
+      pour les menuiseries sur mesure, <strong style="color:var(--ink)">${DELAI_PIECES} semaines</strong> pour les pièces détachées.
+      Option « Livraison Flash » : délai ramené à <strong style="color:var(--ink)">${DELAI_FLASH} semaines</strong> moyennant un
+      supplément de ${Math.round(FLASH_PCT*100)} % du sous-total.</p>
+      ${P}À la réception, le Client vérifie l'état des produits et formule toute réserve sur le bon de livraison,
+      confirmée au vendeur dans les meilleurs délais.</p>`)}
+    ${legalSec('Article 8 — Droit de rétractation', `
+      ${P}<strong style="color:var(--ink)">Produits sur mesure (volets, fenêtres)</strong> : conformément à l'article
+      <strong style="color:var(--ink)">L221-28 3° du Code de la consommation</strong>, le droit de rétractation ne peut être exercé
+      pour les biens confectionnés selon les spécifications du consommateur ou nettement personnalisés. Les menuiseries fabriquées
+      aux dimensions et options du Client n'ouvrent donc <strong style="color:var(--ink)">pas droit à rétractation</strong>.</p>
+      ${P}<strong style="color:var(--ink)">Pièces détachées standard</strong> : le Client dispose d'un délai de
+      <strong style="color:var(--ink)">14 jours</strong> à compter de la réception pour se rétracter, sans motif
+      (art. L221-18). Le retour s'effectue dans les 14 jours suivant la notification, produits complets et en état de revente,
+      frais de retour à la charge du Client. Remboursement dans les 14 jours suivant la récupération des produits.</p>`)}
+    ${legalSec('Article 9 — Garanties légales', `
+      ${P}Tous les produits bénéficient de la <strong style="color:var(--ink)">garantie légale de conformité</strong>
+      (art. L217-3 et suivants du Code de la consommation) et de la <strong style="color:var(--ink)">garantie des vices cachés</strong>
+      (art. 1641 à 1649 du Code civil), indépendamment de toute garantie commerciale éventuelle des fabricants.</p>
+      <div style="background:var(--section);border:1px solid var(--line);border-radius:10px;padding:14px 16px;font-size:13px;line-height:1.6;margin-top:6px">
+        Le consommateur dispose d'un délai de <strong>deux ans</strong> à compter de la délivrance du bien pour obtenir la mise en œuvre
+        de la garantie légale de conformité en cas d'apparition d'un défaut de conformité. Durant ce délai, il n'est tenu d'établir
+        que l'existence du défaut, et non sa date d'apparition. Il peut choisir entre la réparation et le remplacement du bien,
+        sous réserve des conditions de coût prévues par l'article L217-12. La garantie légale de conformité s'applique
+        indépendamment de toute garantie commerciale.
+      </div>`)}
+    ${legalSec('Article 10 — Responsabilité', `
+      ${P}Le vendeur n'est pas responsable de l'inexécution du contrat en cas de force majeure, du fait du Client
+      (notamment erreur de mesure sur des cotes saisies par lui) ou du fait imprévisible et insurmontable d'un tiers.</p>`)}
+    ${legalSec('Article 11 — Médiation de la consommation', `
+      ${P}Conformément à l'article L612-1 du Code de la consommation, le Client peut recourir gratuitement à un médiateur
+      de la consommation : ${phFill('médiateur à désigner avant l’ouverture des ventes')}.</p>
+      ${P}Plateforme européenne de règlement en ligne des litiges :
+      <a href="https://ec.europa.eu/consumers/odr" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">ec.europa.eu/consumers/odr</a></p>`)}
+    ${legalSec('Article 12 — Droit applicable', `
+      ${P}Les présentes CGV sont soumises au droit français. Tout litige relève, à défaut d'accord amiable ou de médiation,
+      des tribunaux français compétents.</p>`)}
+  `);
+}
+
+function renderConfidentialite(){
+  const P = `<p style="margin:0 0 10px">`;
+  return legalShell('Confidentialité', 'Protection des données (RGPD)', 'Politique de confidentialité', `
+    ${legalSec('1. Responsable du traitement', `
+      ${P}${phFill('raison sociale')} — ${phFill('adresse du siège')} —
+      contact : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a></p>`)}
+    ${legalSec('2. Données collectées', `
+      ${P}<strong style="color:var(--ink)">Demande de rappel</strong> : nom (facultatif), numéro de téléphone.</p>
+      ${P}<strong style="color:var(--ink)">Demande d'aide (configurateur)</strong> : e-mail, message, contexte de configuration
+      (produit, dimensions, étape).</p>
+      ${P}<strong style="color:var(--ink)">Commande</strong> : identité, adresse de livraison, téléphone, e-mail.
+      Les <strong style="color:var(--ink)">données bancaires ne sont jamais collectées par le Site</strong> : elles seront traitées
+      exclusivement par le prestataire de paiement sécurisé, à l'ouverture des commandes.</p>
+      ${P}<strong style="color:var(--ink)">Navigation</strong> : aucune donnée — le Site n'utilise ni cookie, ni traceur,
+      ni outil de mesure d'audience ; les polices de caractères sont hébergées localement (aucun appel à des serveurs tiers).</p>
+      ${P}<em>Transparence — site en démonstration : à ce jour, les informations saisies dans les formulaires ne sont ni enregistrées
+      sur un serveur ni transmises à des tiers ; la demande d'aide ouvre uniquement votre propre logiciel de messagerie.</em></p>`)}
+    ${legalSec('3. Finalités et bases légales', `
+      ${P}· Répondre aux demandes de rappel et d'aide — <em>mesures précontractuelles</em> (art. 6.1.b RGPD).</p>
+      ${P}· Traiter et livrer les commandes — <em>exécution du contrat</em> (art. 6.1.b).</p>
+      ${P}· Facturation et obligations comptables — <em>obligation légale</em> (art. 6.1.c).</p>
+      ${P}Aucune prospection commerciale n'est réalisée sans consentement ; aucune donnée n'est vendue ni cédée.</p>`)}
+    ${legalSec('4. Destinataires', `
+      ${P}Les données sont destinées à l'équipe du Site et, à l'ouverture des commandes, aux prestataires strictement
+      nécessaires : prestataire de paiement, transporteur, hébergeur. Aucun transfert hors Union européenne n'est réalisé
+      pour les besoins du Site ${phFill('à vérifier selon l’hébergeur et le prestataire retenus')}.</p>`)}
+    ${legalSec('5. Durées de conservation', `
+      ${P}· Prospects (rappel, aide) : <strong style="color:var(--ink)">3 ans</strong> après le dernier contact.</p>
+      ${P}· Clients : durée de la relation commerciale, puis archivage limité aux obligations légales
+      (pièces comptables : <strong style="color:var(--ink)">10 ans</strong>).</p>`)}
+    ${legalSec('6. Vos droits', `
+      ${P}Conformément au RGPD et à la loi Informatique et Libertés, vous disposez des droits d'<strong style="color:var(--ink)">accès</strong>,
+      de <strong style="color:var(--ink)">rectification</strong>, d'<strong style="color:var(--ink)">effacement</strong>,
+      d'<strong style="color:var(--ink)">opposition</strong>, de <strong style="color:var(--ink)">limitation</strong> et de
+      <strong style="color:var(--ink)">portabilité</strong> de vos données.</p>
+      ${P}Pour les exercer : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a>.
+      Vous pouvez également adresser une réclamation à la CNIL :
+      <a href="https://www.cnil.fr" target="_blank" rel="noopener" style="color:var(--accent);text-decoration:none">cnil.fr</a>.</p>`)}
+    ${legalSec('7. Sécurité', `
+      ${P}Le Site est servi intégralement en <strong style="color:var(--ink)">HTTPS</strong>. Les futures transactions seront
+      confiées à un prestataire de paiement certifié PCI-DSS avec authentification forte (3-D Secure / DSP2).</p>`)}
+  `);
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // MAIN RENDER
 // ─────────────────────────────────────────────────────────────────────────────
 function _render(){
@@ -1875,6 +2082,9 @@ function _render(){
     callback: renderCallback,
     aide:    renderAide,
     livraison: renderLivraison,
+    mentions: renderMentions,
+    cgv:      renderCGV,
+    confidentialite: renderConfidentialite,
   };
 
   document.getElementById('root').innerHTML =
