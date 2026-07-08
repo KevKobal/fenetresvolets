@@ -824,33 +824,6 @@ function brandKommerling(){
 // HOME SCREEN
 // ─────────────────────────────────────────────────────────────────────────────
 function renderHome(){
-  const prods = [
-    { tag:'Bubendorff',    title:'Volet solaire MONO iD4',     desc:'Lames alu, panneau solaire intégré, 100% autonome.',  p:'volet',   img:'bubendorff-mono-id4-solaire.png',            fit:'contain', preset:{modele:'mono',lames:'standard',moteur:'solaire'}   },
-    { tag:'Bubendorff',    title:'MONO iD4 orientable',        desc:'Lames orientables : lumière et aération maîtrisées.', p:'volet',   img:'bubendorff-mono-id4-solaire-orientable.png', fit:'contain', preset:{modele:'mono',lames:'orientable',moteur:'solaire'} },
-    { tag:'Kömmerling 76', title:'Fenêtre PVC 76 MD',          desc:'Profilé 6 chambres, triple joint — Uw ≥ 0,77.',      p:'fenetre', img:'kommerling-76-md.png',                       fit:'cover',   preset:{matiere:'pvc',profil:'76md'}  },
-  ];
-
-  const gridCards = prods.map(pr => {
-    const presetStr = JSON.stringify(pr.preset).replace(/"/g,"'");
-    const fallback = pr.p === 'volet'
-      ? 'background:repeating-linear-gradient(180deg,#E9EBED 0 8px,#DBDEE1 8px 10px)'
-      : 'background:linear-gradient(135deg,#EAEFF2,#D8E0E6)';
-    const thumb = pr.img
-      ? `<div style="aspect-ratio:4/3;border-bottom:1px solid var(--line);background:var(--section);display:flex;align-items:center;justify-content:center;overflow:hidden"><img src="${ASSET}${pr.img}" alt="${pr.title}" loading="lazy" style="width:100%;height:100%;object-fit:${pr.fit||'cover'};${pr.fit==='contain'?'padding:14px':''}"></div>`
-      : `<div style="aspect-ratio:4/3;border-bottom:1px solid var(--line);${fallback}"></div>`;
-    return `<div onclick="pickProduct('${pr.p}',${presetStr})" style="cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden" class="card-hover">
-      ${thumb}
-      <div style="padding:20px 22px 22px">
-        <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">${pr.tag}</div>
-        <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--ink)">${pr.title}</h3>
-        <p style="font-size:14px;line-height:1.5;color:var(--muted);margin:0 0 16px">${pr.desc}</p>
-        <div style="display:flex;align-items:center;justify-content:flex-end">
-          <span style="font-size:14px;font-weight:700;color:var(--accent)">Configurer →</span>
-        </div>
-      </div>
-    </div>`;
-  }).join('');
-
   return `<main class="anim">
 
     <!-- hero (photo de façade + texte gooey morphing) -->
@@ -906,13 +879,6 @@ function renderHome(){
           </div>
         </div>
       </div>
-    </section>
-
-    <!-- product grid -->
-    <section style="max-width:1240px;margin:0 auto;padding:76px 32px 30px;text-align:center">
-      <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-weight:800;font-size:38px;letter-spacing:-.025em;margin:0 0 10px;color:var(--ink)">Nos produits sur mesure</h2>
-      <p style="font-size:16.5px;color:var(--muted);margin:0 auto 44px;max-width:520px">Choisissez votre produit, renseignez vos mesures et obtenez votre prix instantanément.</p>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px;text-align:left">${gridCards}</div>
     </section>
 
     <!-- deux façons de commander -->
