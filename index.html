@@ -196,7 +196,15 @@ const COL = {
 const VOLET_TABLIER    = ['b100','b105','b115','b225','b117','b240','b310','b403','b112','b119','b120','b125','b150','b407'];
 const VOLET_TABLIER_OR = ['b100','b115','b117'];                                   // teintes dispo pour lames orientables
 const VOLET_CAISSON    = VOLET_TABLIER;                                            // l'encadrement accepte toute la palette
-const VOLET_BASE_COL   = ['b100','b105','b115','b225','b117','b240','b310','b403']; // Type 1 (tarif de base, sans supplément)
+const VOLET_BASE_COL   = ['b100','b105','b115','b225','b117','b240','b310','b403']; // Type 1 (référence nuancier)
+
+// Tarif volet — uniquement selon la SURFACE (fourchette), interpolation linéaire bornée.
+// 600×600 (0,36 m²) → 600 € TTC · grand volet (~2500×2500 = 6,25 m²) → 990 € TTC.
+const VOLET_PRIX_MIN = 600;    // TTC (petit volet)
+const VOLET_PRIX_MAX = 990;    // TTC (grand volet)
+const VOLET_S_MIN    = 0.36;   // m² — 600×600
+const VOLET_S_MAX    = 6.25;   // m² — 2500×2500 (3000×2200 = 6,6 m² est plafonné au prix max)
+const VOLET_ORIENTABLE = 300;  // € — option lames orientables, forfait par volet
 
 // Grille tarifaire fenêtre PVC Kömmerling 76 (prix TTC) — 3 tailles de référence par type,
 // interpolées linéairement sur la surface (m²). blanc · f1 = coloris 1 face (ext) · f2 = 2 faces.
@@ -342,11 +350,11 @@ function lerpFen(anchors, key, s){
 function priceFor(g, c){
   const w = c.w||1000, h = c.h||1000, surf = Math.max(0.9,(w*h)/1e6);
   if(g === 'volet'){
-    let ppm = ({filaire:175,radio:225,solaire:320})[c.moteur]||225;
-    ppm += (BUBENDORFF.modeles[c.modele]||{}).add||0;   // supplément du modèle iD4
-    if(c.lames === 'orientable') ppm += 45;              // lames orientables Bubendorff
-    let p = ppm * surf;
-    if(!VOLET_BASE_COL.includes(c.couleur)) p *= 1.08;   // teinte tablier Type 2 (option)
+    // Prix selon la SURFACE uniquement (fourchette 600 €→990 €). Modèle, motorisation et couleur n'impactent pas le prix.
+    const surfV = (w*h)/1e6;
+    const t = Math.max(0, Math.min(1, (surfV - VOLET_S_MIN) / (VOLET_S_MAX - VOLET_S_MIN)));
+    let p = VOLET_PRIX_MIN + t * (VOLET_PRIX_MAX - VOLET_PRIX_MIN);
+    if(c.lames === 'orientable') p += VOLET_ORIENTABLE;  // option lames orientables (forfait par volet)
     return Math.round(p/5)*5;
   } else {
     const surfF = (w*h)/1e6;                                   // surface réelle (sans plancher)
@@ -1134,7 +1142,7 @@ function renderConfig(){
     </div>`;
 
   const lamesOpts = M.orientable
-    ? [{key:'standard',label:'Standard ajourées'},{key:'orientable',label:'Orientables'}]
+    ? [{key:'standard',label:'Standard ajourées'},{key:'orientable',label:'Orientables · +300 €'}]
     : [{key:'standard',label:'Standard ajourées'}];
   const tablierKeys = cur.lames === 'orientable' ? VOLET_TABLIER_OR : VOLET_TABLIER;
   const lamesToggle = lamesOpts.map(o => {

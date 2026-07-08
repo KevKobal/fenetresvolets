@@ -532,3 +532,13 @@ Restructuration complète du configurateur volet autour de la **gamme iD4** rée
 - **BLOC N/R iD4** : l'ancienne photo (coffret intérieur, inadaptée) remplacée par une **photo extérieure**
   (volet anthracite sur grande baie vitrée, `bubendorff-bloc-id4.jpg`, `fit:'cover'`).
 - Vérifié : 4 images chargées (0 requête échouée), cartes cohérentes (3 cutouts + 1 photo).
+
+### Volet — nouveau tarif « fourchette à la taille » + option orientable forfait (8 juillet 2026, suite)
+- **Prix volet = uniquement la surface** (fourchette). Modèle, motorisation, teinte tablier/caisson
+  **n'impactent plus le prix** (suppléments modèle `add`, base moteur €/m², surcharge couleur Type 2 supprimés).
+- Interpolation linéaire bornée sur la surface : **600×600 (0,36 m²) → 600 € TTC** · **~2500×2500 (6,25 m²) → 990 € TTC**
+  (3000×2200 = 6,6 m² plafonné à 990 €). Constantes `VOLET_PRIX_MIN/MAX`, `VOLET_S_MIN/MAX`. Arrondi 5 €.
+- **Option lames orientables = forfait `VOLET_ORIENTABLE` +300 € par volet** (plus de +45 €/m²). Libellé du
+  toggle : « Orientables · +300 € ».
+- Vérifié : 600×600=600 € · 2500×2500=990 € · 3000×2200=990 € · 1200×1400=685 € · invariance modèle/moteur/
+  couleur ✓ · orientable +300 exact (685→985) · 0 erreur console.
