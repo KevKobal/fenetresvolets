@@ -383,7 +383,6 @@ function priceFor(g, c){
 
 function totals(){
   const sub = S.cart.reduce((a,i) => a+i.total, 0);
-  const subVolet = S.cart.filter(i => i.product === 'volet').reduce((a,i) => a+i.total, 0); // volets : prix non soumis à TVA
   const menuiserieQty = S.cart.filter(i => i.product === 'volet' || i.product === 'fenetre').reduce((a,i) => a+i.qty, 0);
   const hasPieces = S.cart.some(i => i.product === 'piece');
 
@@ -405,12 +404,9 @@ function totals(){
   const weeks = flashActive ? DELAI_FLASH : baseWeeks;
 
   const total = sub + livraison + flash;
-  // La TVA (20%) ne porte que sur les articles soumis (fenêtres, pièces) + livraison ;
-  // les volets sont indiqués à un prix ferme non soumis à TVA (HT = TTC pour ces lignes).
-  const taxableTTC = (sub - subVolet) + livraison + flash;
-  const tva = taxableTTC - taxableTTC/1.2;
-  const ht = total - tva;
-  return { sub, subVolet, livraison, flash, flashActive, canFlash, total, ht, tva, gratuite, menuiserieQty, hasPieces, weeks, baseWeeks };
+  // Tous les prix sont TTC, TVA 20% incluse → on extrait la TVA du total.
+  const ht = total/1.2, tva = total - ht;
+  return { sub, livraison, flash, flashActive, canFlash, total, ht, tva, gratuite, menuiserieQty, hasPieces, weeks, baseWeeks };
 }
 
 function itemTitle(it){
@@ -1512,8 +1508,7 @@ function renderCart(){
           <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Livraison à domicile</span><span style="font-weight:600;color:var(--ink)">${T.livraison === 0 ? 'Offerte' : eur(T.livraison)}</span></div>
           ${T.flashActive ? `<div style="display:flex;justify-content:space-between"><span style="color:var(--accent)">Livraison Flash (+20%)</span><span style="font-weight:600;color:var(--accent)">${eur(T.flash)}</span></div>` : ''}
           <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Délai estimé</span><span style="font-weight:600;color:var(--ink)">${T.weeks} semaines</span></div>
-          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">dont TVA 20%${T.subVolet>0?' (hors volets)':''}</span><span style="font-weight:600;color:var(--ink)">${eur(T.tva)}</span></div>
-          ${T.subVolet>0?`<div style="display:flex;justify-content:space-between;font-size:12.5px"><span style="color:var(--muted)">Volets · prix ferme non soumis à TVA</span><span style="color:var(--muted)">${eur(T.subVolet)}</span></div>`:''}
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">dont TVA 20%</span><span style="font-weight:600;color:var(--ink)">${eur(T.tva)}</span></div>
         </div>
         ${livraisonBanner}
         <div style="border-top:1px solid var(--line);padding-top:16px;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px">
@@ -1618,8 +1613,7 @@ function renderPayment(){
           <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Livraison</span><span style="color:var(--ink);font-weight:600">${T.livraison === 0 ? 'Offerte' : eur(T.livraison)}</span></div>
           ${T.flashActive ? `<div style="display:flex;justify-content:space-between"><span style="color:var(--accent)">Livraison Flash (+20%)</span><span style="color:var(--accent);font-weight:600">${eur(T.flash)}</span></div>` : ''}
           <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Délai estimé</span><span style="color:var(--ink);font-weight:600">${T.weeks} semaines</span></div>
-          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">dont TVA 20%${T.subVolet>0?' (hors volets)':''}</span><span style="color:var(--ink);font-weight:600">${eur(T.tva)}</span></div>
-          ${T.subVolet>0?`<div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Volets · prix ferme non soumis à TVA</span><span style="color:var(--muted)">${eur(T.subVolet)}</span></div>`:''}
+          <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">dont TVA 20%</span><span style="color:var(--ink);font-weight:600">${eur(T.tva)}</span></div>
         </div>
         <div style="border-top:1px solid var(--line);padding-top:14px;display:flex;justify-content:space-between;align-items:baseline;margin-bottom:20px">
           <span style="font-size:15px;font-weight:700;color:var(--ink)">Total</span>
