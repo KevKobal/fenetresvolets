@@ -763,7 +763,7 @@ function brandBubendorff(){
 function brandKommerling(){
   const pf = KOMMERLING.profils;
   const list = [
-    { ...pf['76md'], preset:{matiere:'pvc',profil:'76md'}, from:'275 €/m²' }
+    { ...pf['76md'], preset:{matiere:'pvc',profil:'76md'} }
   ];
   const cards = list.map(p => `
     <div onclick="pickProduct('fenetre',${JSON.stringify(p.preset).replace(/"/g,"'")})" style="cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden" class="card-hover">
@@ -775,8 +775,7 @@ function brandKommerling(){
           <span style="font-size:12px;font-weight:600;background:var(--accent-soft);color:var(--accent);padding:4px 10px;border-radius:999px">${p.uw}</span>
           <span style="font-size:12px;font-weight:600;background:var(--section);color:var(--muted);padding:4px 10px;border-radius:999px;border:1px solid var(--line)">${p.chambres}</span>
         </div>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:13.5px;color:var(--muted)">dès <strong style="color:var(--ink)">${p.from}</strong></span>
+        <div style="display:flex;align-items:center;justify-content:flex-end">
           <span style="font-size:14px;font-weight:700;color:var(--accent)">Configurer →</span>
         </div>
       </div>
@@ -813,9 +812,9 @@ function brandKommerling(){
 // ─────────────────────────────────────────────────────────────────────────────
 function renderHome(){
   const prods = [
-    { tag:'Bubendorff',    title:'Volet solaire MONO iD4',     desc:'Lames alu, panneau solaire intégré, 100% autonome.',  from:'320 €/m²', p:'volet',   img:'bubendorff-mono-id4-solaire.png',            fit:'contain', preset:{modele:'mono',lames:'standard',moteur:'solaire'}   },
-    { tag:'Bubendorff',    title:'MONO iD4 orientable',        desc:'Lames orientables : lumière et aération maîtrisées.', from:'365 €/m²', p:'volet',   img:'bubendorff-mono-id4-solaire-orientable.png', fit:'contain', preset:{modele:'mono',lames:'orientable',moteur:'solaire'} },
-    { tag:'Kömmerling 76', title:'Fenêtre PVC 76 MD',          desc:'Profilé 6 chambres, triple joint — Uw ≥ 0,77.',      from:'275 €/m²', p:'fenetre', img:'kommerling-76-md.png',                       fit:'cover',   preset:{matiere:'pvc',profil:'76md'}  },
+    { tag:'Bubendorff',    title:'Volet solaire MONO iD4',     desc:'Lames alu, panneau solaire intégré, 100% autonome.',  p:'volet',   img:'bubendorff-mono-id4-solaire.png',            fit:'contain', preset:{modele:'mono',lames:'standard',moteur:'solaire'}   },
+    { tag:'Bubendorff',    title:'MONO iD4 orientable',        desc:'Lames orientables : lumière et aération maîtrisées.', p:'volet',   img:'bubendorff-mono-id4-solaire-orientable.png', fit:'contain', preset:{modele:'mono',lames:'orientable',moteur:'solaire'} },
+    { tag:'Kömmerling 76', title:'Fenêtre PVC 76 MD',          desc:'Profilé 6 chambres, triple joint — Uw ≥ 0,77.',      p:'fenetre', img:'kommerling-76-md.png',                       fit:'cover',   preset:{matiere:'pvc',profil:'76md'}  },
   ];
 
   const gridCards = prods.map(pr => {
@@ -832,8 +831,7 @@ function renderHome(){
         <div style="font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--accent);margin-bottom:8px">${pr.tag}</div>
         <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:21px;font-weight:700;letter-spacing:-.01em;margin:0 0 6px;color:var(--ink)">${pr.title}</h3>
         <p style="font-size:14px;line-height:1.5;color:var(--muted);margin:0 0 16px">${pr.desc}</p>
-        <div style="display:flex;align-items:center;justify-content:space-between">
-          <span style="font-size:13.5px;color:var(--muted)">dès <strong style="color:var(--ink)">${pr.from}</strong></span>
+        <div style="display:flex;align-items:center;justify-content:flex-end">
           <span style="font-size:14px;font-weight:700;color:var(--accent)">Configurer →</span>
         </div>
       </div>
@@ -1067,7 +1065,7 @@ function renderConfig(){
               <img src="${ASSET}${m.img}" alt="${m.label}" loading="lazy" style="width:100%;height:100%;object-fit:${m.fit};${m.fit==='contain'?'padding:14px':''}">
             </div>
             <div style="padding:15px 16px 16px">
-              <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:5px">${m.badge}${m.add?` · +${m.add} €/m²`:''}</div>
+              <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:5px">${m.badge}</div>
               <div style="font-size:15.5px;font-weight:700;color:var(--ink)">${m.label}</div>
               <div style="font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:4px">${m.desc}</div>
             </div>
@@ -1119,9 +1117,9 @@ function renderConfig(){
     </div>`;
 
   const motorOpts = [
-    {key:'filaire', label:'Filaire',           desc:'Interrupteur mural',    price:'175 €/m²'},
-    {key:'radio',   label:'Radio',             desc:'Télécommande sans fil', price:'225 €/m²'},
-    {key:'solaire', label:'Solaire Bubendorff', desc:'Autonome, sans câblage', price:'320 €/m²'}
+    {key:'filaire', label:'Filaire',           desc:'Interrupteur mural'},
+    {key:'radio',   label:'Radio',             desc:'Télécommande sans fil'},
+    {key:'solaire', label:'Solaire Bubendorff', desc:'Autonome, sans câblage'}
   ].filter(o => M.moteurs.includes(o.key));
   const secMotor = `
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px">
@@ -1129,7 +1127,7 @@ function renderConfig(){
         <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0;color:var(--ink)">Motorisation</h3>
         <span style="font-size:11px;font-weight:600;color:var(--muted)">compatible ${M.label}</span>
       </div>
-      <p style="font-size:13px;color:var(--muted);margin:0 0 18px;line-height:1.5">Motorisations Bubendorff disponibles pour ce modèle.${M.add?` <span style="color:var(--ink);font-weight:600">Supplément modèle : +${M.add} €/m².</span>`:''}</p>
+      <p style="font-size:13px;color:var(--muted);margin:0 0 18px;line-height:1.5">Motorisations Bubendorff disponibles pour ce modèle.</p>
       <div style="display:grid;grid-template-columns:repeat(${motorOpts.length},1fr);gap:12px">
         ${optCards('volet','moteur',motorOpts)}
       </div>
@@ -1198,7 +1196,7 @@ function renderConfig(){
           const sel = cur.profil === key;
           return `<div onclick="setField('fenetre','profil','${key}')" style="${cardStyle(sel)}">
             <div style="display:flex;justify-content:space-between;align-items:baseline">
-              <span style="font-size:14.5px;font-weight:700;color:var(--ink)">${v.label}</span>${v.add?`<span style="color:var(--accent);font-size:12.5px;font-weight:600">+${v.add} €/m²</span>`:''}
+              <span style="font-size:14.5px;font-weight:700;color:var(--ink)">${v.label}</span>
             </div>
             <div style="font-size:12.5px;color:var(--muted);line-height:1.4;margin-top:4px">${v.desc}</div>
             <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:9px">
