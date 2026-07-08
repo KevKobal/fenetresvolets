@@ -151,6 +151,18 @@ html,body{overflow-x:hidden}
   .step-label{display:none!important}
   .step-conn{margin:0 8px!important}
 }
+/* FAQ — accordéon natif <details> */
+.faq-item{background:var(--surface);border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden;transition:border-color .15s}
+.faq-item[open]{border-color:var(--accent)}
+.faq-q{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 20px;font-family:'Schibsted Grotesk',sans-serif;font-size:16px;font-weight:700;color:var(--ink)}
+.faq-q::-webkit-details-marker{display:none}
+.faq-q:hover{color:var(--accent)}
+.faq-plus{flex-shrink:0;width:22px;height:22px;position:relative;transition:transform .2s}
+.faq-plus::before,.faq-plus::after{content:"";position:absolute;top:50%;left:50%;width:12px;height:2px;background:var(--accent);border-radius:2px;transform:translate(-50%,-50%)}
+.faq-plus::after{transform:translate(-50%,-50%) rotate(90deg);transition:transform .2s}
+.faq-item[open] .faq-plus::after{transform:translate(-50%,-50%) rotate(0deg)}
+.faq-a{padding:0 20px 20px;font-size:14.5px;line-height:1.65;color:var(--muted)}
+.faq-a strong{color:var(--ink)}
 </style>
 </head>
 <body>
@@ -443,6 +455,7 @@ function goPayment(){ go('payment'); }
 function goPieces(){ go('pieces'); }
 function goAide(){ go('aide'); }
 function goLivraison(){ go('livraison'); }
+function goFaq(){ go('faq'); }
 function goMentions(){ go('mentions'); }
 function goCGV(){ go('cgv'); }
 function goConfidentialite(){ go('confidentialite'); }
@@ -703,6 +716,7 @@ function renderHeader(){
     {label:'Fenêtres',         ic:I.fenetre, on:"pickProduct('fenetre')", active:false},
     {label:'Pièces & moteurs', ic:I.piece,   on:'goPieces()',             active:S.screen==='pieces'},
     {label:'Aide à la mesure', ic:I.aide,    on:'goAide()',               active:S.screen==='aide'},
+    {label:'FAQ',              ic:I.aide,    on:'goFaq()',                active:S.screen==='faq'},
     {label:'Livraison & délais', ic:I.livr,  on:'goLivraison()',          active:S.screen==='livraison'},
     {label:'Demander à être rappelé', ic:I.phone, on:'goCallback()',      active:S.screen==='callback'},
     {label:'Panier'+(cartQty?' ('+cartQty+')':''), ic:I.cart, on:'goCart()', active:S.screen==='cart'}
@@ -1002,7 +1016,7 @@ function renderHome(){
         </div>
         <div>
           <div style="font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Aide</div>
-          <div style="display:flex;flex-direction:column;gap:9px;font-size:14px;color:var(--ink)"><span onclick="goAide()" style="cursor:pointer">Guide de mesure</span><span onclick="goLivraison()" style="cursor:pointer">Livraison & délais</span><span>Garantie ${GARANTIE} ans</span></div>
+          <div style="display:flex;flex-direction:column;gap:9px;font-size:14px;color:var(--ink)"><span onclick="goAide()" style="cursor:pointer">Guide de mesure</span><span onclick="goFaq()" style="cursor:pointer">FAQ</span><span onclick="goLivraison()" style="cursor:pointer">Livraison & délais</span><span>Garantie ${GARANTIE} ans</span></div>
         </div>
         <div>
           <div style="font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--muted);margin-bottom:12px">Contact</div>
@@ -1831,6 +1845,77 @@ function renderAide(){
 // ─────────────────────────────────────────────────────────────────────────────
 // LIVRAISON & DÉLAIS (sous-menu Aide)
 // ─────────────────────────────────────────────────────────────────────────────
+function renderFaq(){
+  // Réponses branchées sur les constantes du site → toujours à jour.
+  const groups = [
+    { cat:'Commande & configurateur', items:[
+      { q:'Comment passer commande ?', a:`Choisissez un produit (volet ou fenêtre), renseignez vos dimensions au millimètre dans le configurateur, personnalisez les finitions puis ajoutez au panier. Le prix <strong>TTC</strong> s'affiche en temps réel.${DEMO ? ' <strong>Le site est actuellement en démonstration : les commandes et paiements ne sont pas encore actifs.</strong>' : ''}` },
+      { q:'Le prix affiché est-il définitif ?', a:`Oui. Il est calculé automatiquement selon vos dimensions exactes et les options choisies, et exprimé <strong>toutes taxes comprises</strong>. Il n'y a pas de devis à attendre.` },
+      { q:'Puis-je commander plusieurs produits en une fois ?', a:`Bien sûr. Le panier accepte autant de volets, fenêtres et pièces que vous le souhaitez ; les frais de livraison et le total se recalculent en conséquence.` },
+    ]},
+    { cat:'Volets roulants Bubendorff iD4', items:[
+      { q:'Quels modèles de volets proposez-vous ?', a:`La gamme <strong>Bubendorff iD4</strong> en 4 modèles : <strong>MONO iD4</strong> (rénovation), <strong>MONO iD4 ITE</strong> (isolation par l'extérieur), <strong>TRADI iD4</strong> (neuf & rénovation) et <strong>BLOC N/R iD4</strong> (bloc-baie). Le configurateur n'affiche que les poses et motorisations compatibles avec le modèle choisi.` },
+      { q:'Solaire, radio ou filaire : quelle motorisation choisir ?', a:`Les trois sont disponibles. Le <strong>solaire</strong> est 100% autonome (panneau + batterie lithium-ion, jusqu'à 6 semaines d'autonomie) et ne demande aucun câblage — idéal en rénovation. Le <strong>radio</strong> et le <strong>filaire</strong> se raccordent au réseau électrique.` },
+      { q:'Lames standard ou orientables ?', a:`Les lames <strong>standard ajourées</strong> assurent l'occultation totale ou une position d'aération. Les lames <strong>orientables</strong> (une lame sur deux pivote) permettent de doser lumière et intimité — option à <strong>${eur(VOLET_ORIENTABLE)} par volet</strong>.` },
+      { q:'Combien coûte un volet roulant ?', a:`Le prix dépend uniquement de la surface : de <strong>${eur(VOLET_PRIX_MIN)}</strong> (petit volet ~600×600 mm) à <strong>${eur(VOLET_PRIX_MAX)}</strong> (grand volet), TTC. L'option lames orientables ajoute ${eur(VOLET_ORIENTABLE)}.` },
+    ]},
+    { cat:'Fenêtres PVC Kömmerling 76', items:[
+      { q:'Quel profilé utilisez-vous ?', a:`Le <strong>Kömmerling 76 MD</strong> : profilé PVC allemand de 76 mm, <strong>6 chambres</strong>, triple joint d'étanchéité, coefficient thermique <strong>Uw ≥ 0,77</strong>.` },
+      { q:'Quels types d’ouverture sont possibles ?', a:`<strong>1 vantail</strong>, <strong>2 vantaux</strong>, <strong>châssis fixe</strong> et <strong>soufflet</strong>. La fonction <strong>oscillo-battant</strong> (entrouverture par le haut) est incluse d'office sur les vantaux ouvrants.` },
+      { q:'Double ou triple vitrage ?', a:`Le double vitrage est proposé de série. Le <strong>triple vitrage</strong> est disponible en supplément (${eur(FEN_TRIPLE_M2)} / m²) pour une isolation renforcée.` },
+      { q:'Quelles finitions et options ?', a:`Nuancier de 12 coloris (dont décors bois), application <strong>une ou deux faces</strong>, poignée, <strong>seuil aluminium 20 mm</strong> (+${eur(FEN_SEUIL)}) et <strong>grille de ventilation</strong> (+${eur(FEN_GRILLE)}).` },
+    ]},
+    { cat:'Mesures & pose', items:[
+      { q:'Comment prendre mes mesures ?', a:`Notre page <strong>Aide à la mesure</strong> détaille la prise de cotes selon votre type de pose (rénovation, tunnel, applique). Indiquez toujours vos dimensions <strong>en millimètres</strong>. En cas de doute, faites-vous rappeler avant de commander.` },
+      { q:'La pose est-elle incluse ?', a:`Nos menuiseries sont fabriquées sur-mesure et <strong>livrées à domicile</strong>, prêtes à poser. La pose n'est pas comprise dans le prix. Un conseiller peut vous guider sur la mise en œuvre.` },
+    ]},
+    { cat:'Livraison & délais', items:[
+      { q:'Quels sont les délais de fabrication ?', a:`Comptez <strong>${DELAI_MENUISERIE} semaines</strong> pour les fenêtres et volets sur-mesure, <strong>${DELAI_PIECES} semaines</strong> pour les pièces détachées. L'option <strong>Livraison Flash</strong> ramène le délai des menuiseries à ${DELAI_FLASH} semaines (+20%).` },
+      { q:'Quels sont les frais de livraison ?', a:`Pièces seules : <strong>${eur(FRAIS_PIECES)}</strong> · 1 fenêtre ou 1 volet : <strong>${eur(FRAIS_1)}</strong> · 2 menuiseries ou plus : <strong>${eur(FRAIS_PLUS)}</strong>. La <strong>livraison est offerte dès ${eur(LIVRAISON_SEUIL)}</strong> de commande.` },
+    ]},
+    { cat:'Paiement, garantie & rétractation', items:[
+      { q:'Quels moyens de paiement acceptez-vous ?', a:`Le paiement s'effectue par carte bancaire (CB, Visa, Mastercard) via une connexion sécurisée.${DEMO ? ' <strong>En phase de démonstration, le paiement n’est pas encore actif.</strong>' : ''}` },
+      { q:'Quelle garantie sur les produits ?', a:`Vos achats bénéficient d'une garantie de <strong>${GARANTIE} ans</strong>, en plus des garanties légales de conformité et des garanties propres aux fabricants (Bubendorff, Kömmerling).` },
+      { q:'Puis-je annuler ou me rétracter ?', a:`Les fenêtres et volets étant <strong>fabriqués sur-mesure</strong>, ils sont exclus du droit de rétractation (art. L221-28 3° du Code de la consommation). Les <strong>pièces détachées</strong> standard bénéficient du délai de rétractation de <strong>14 jours</strong>.` },
+    ]},
+  ];
+
+  const groupsHtml = groups.map(g => `
+    <section style="margin-bottom:30px">
+      <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px;color:var(--ink)">${g.cat}</h2>
+      ${g.items.map(it => `<details class="faq-item">
+        <summary class="faq-q">${it.q}<span class="faq-plus"></span></summary>
+        <div class="faq-a">${it.a}</div>
+      </details>`).join('')}
+    </section>`).join('');
+
+  return `<main class="anim" style="max-width:900px;margin:0 auto;padding:34px 32px 80px">
+
+    <div style="display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);margin-bottom:20px">
+      <span onclick="goHome()" style="cursor:pointer">Accueil</span><span>/</span>
+      <span style="color:var(--ink);font-weight:600">Foire aux questions</span>
+    </div>
+
+    <header style="margin-bottom:34px">
+      <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:12px">Aide &amp; réponses</div>
+      <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-size:clamp(30px,5vw,46px);font-weight:800;letter-spacing:-.025em;line-height:1.05;margin:0 0 14px;color:var(--ink)">Foire aux questions</h1>
+      <p style="font-size:17px;line-height:1.6;color:var(--muted);margin:0;max-width:680px">Tout ce qu'il faut savoir sur nos produits, la commande, la livraison et le SAV. Vous ne trouvez pas votre réponse ? <span onclick="goCallback()" style="color:var(--accent);font-weight:600;cursor:pointer">Faites-vous rappeler</span>.</p>
+    </header>
+
+    ${groupsHtml}
+
+    <!-- CTA -->
+    <section style="background:var(--section);border:1px solid var(--line);border-radius:18px;padding:34px 32px;text-align:center;margin-top:10px">
+      <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-size:24px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px;color:var(--ink)">Une autre question ?</h2>
+      <p style="font-size:16px;color:var(--muted);margin:0 0 22px">Écrivez-nous à <strong style="color:var(--ink)">${CONTACT_EMAIL}</strong> ou demandez à être rappelé gratuitement.</p>
+      <div style="display:flex;gap:13px;flex-wrap:wrap;justify-content:center">
+        <button onclick="goCallback()" class="neon-btn" style="padding:15px 26px;font-size:15px">Demander à être rappelé</button>
+        <button onclick="goAide()" class="neon-btn" style="padding:15px 26px;font-size:15px">Aide à la mesure</button>
+      </div>
+    </section>
+  </main>`;
+}
+
 function renderLivraison(){
   const frais = [
     ['Pièces détachées',       'Commande de pièces ou accessoires seuls',      eur(FRAIS_PIECES)],
@@ -2131,6 +2216,7 @@ function _render(){
     confirm: renderConfirm,
     callback: renderCallback,
     aide:    renderAide,
+    faq:     renderFaq,
     livraison: renderLivraison,
     mentions: renderMentions,
     cgv:      renderCGV,
