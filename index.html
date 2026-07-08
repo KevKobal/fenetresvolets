@@ -213,9 +213,13 @@ const ASSET = 'assets/';
 const BUBENDORFF = {
   label: 'Bubendorff',
   note: 'Fabricant français · moteur solaire SO · batterie lithium-ion 3,4 Ah (jusqu’à 6 semaines d’autonomie sans soleil) · testé 30 000 cycles · SAV à domicile 30 ans · mode CLIMAT+',
-  gammes: {
-    mono:       { label:'Mono ID4 Solaire',            img:'bubendorff-mono-id4-solaire.png',            desc:'Lames aluminium standard ajourables, panneau solaire intégré, design compact sans vis apparente.', add:0  },
-    orientable: { label:'Mono ID4 Solaire orientable', img:'bubendorff-mono-id4-solaire-orientable.png', desc:'Lames orientables : dosez la lumière et l’aération en position verrouillée sécurisée.',        add:45 }
+  // Gamme iD4 (source doc.bubendorff.com 2026) — chaque modèle porte ses poses & motorisations compatibles.
+  // add = supplément €/m² du modèle · orientable = lames orientables proposées en option (+45 €/m²).
+  modeles: {
+    mono:  { label:'MONO iD4',      img:'bubendorff-mono-id4.png',     fit:'contain', badge:'Rénovation',        desc:'Coffre compact extérieur sans vis apparente, spécial rénovation — luminosité maximale.', poses:['renovation','tunnel'],            moteurs:['solaire','radio','filaire'], orientable:true,  add:0  },
+    ite:   { label:'MONO iD4 ITE',  img:'bubendorff-mono-id4-ite.jpg', fit:'cover',   badge:'Rénovation ITE',    desc:'Conçu pour l’isolation thermique par l’extérieur : performance thermique et fermeture réunies.', poses:['renovation'],                    moteurs:['solaire','filaire'],         orientable:true,  add:25 },
+    tradi: { label:'TRADI iD4',     img:'bubendorff-tradi-id4.jpg',    fit:'cover',   badge:'Neuf & rénovation', desc:'Volet traditionnel intégré au coffre menuisé, pour le neuf comme la rénovation.',               poses:['tunnel','linteau','renovation'], moteurs:['solaire','radio','filaire'], orientable:true,  add:0  },
+    bloc:  { label:'BLOC N/R iD4',  img:'bubendorff-bloc-id4.jpg',     fit:'cover',   badge:'Bloc-baie',         desc:'Bloc-baie design monobloc (menuiserie + volet) pour le neuf et la rénovation.',                 poses:['tunnel','linteau'],              moteurs:['solaire','filaire'],         orientable:false, add:35 }
   },
   autres: [
     { label:'Rolax solaire',     img:'bubendorff-rolax.jpg',       desc:'Volet roulant solaire pour toiture de véranda ou de verrière.' },
@@ -280,7 +284,7 @@ let S = {
   theme: 'azure',
   navOpen: false,   // menu hamburger mobile
   step: 0,          // étape du configurateur
-  volet:   { w:1200, h:1400, pose:'renovation', couleur:'blanc', lames:'pvc', moteur:'radio',  gamme:'mono', sens:'droite', qty:1 },
+  volet:   { modele:'mono', w:1200, h:1400, pose:'renovation', couleur:'blanc', lames:'standard', moteur:'solaire', sens:'droite', qty:1 },
   fenetre: { w:1000, h:1150, ouverture:'2v',    couleur:'blanc', faces:'2', seuil:'non', grille:'non', poignee:'1000', matiere:'pvc', vitrage:'double', profil:'76md', sens:'droite', qty:1 },
   cart: [],
   flash: false,     // option Livraison Flash (délai raccourci, +20%)
@@ -312,7 +316,8 @@ function poseName(k){    return ({renovation:'rénovation',tunnel:'tunnel',linte
 function matiereName(k){ return ({pvc:'PVC',alu:'Aluminium'})[k]||k; }
 function ouvertureName(k){ return ({'1v':'1 vantail','2v':'2 vantaux',oscillo:'Oscillo-battant',fixe:'Fixe',soufflet:'Soufflet'})[k]||k; }
 function vitrageName(k){ return ({double:'Double vitrage',triple:'Triple vitrage'})[k]||k; }
-function gammeName(k){ return (BUBENDORFF.gammes[k]||{}).label||k; }
+function modeleName(k){ return (BUBENDORFF.modeles[k]||{}).label||k; }
+function lamesName(k){ return ({standard:'Standard ajourées',orientable:'Orientables'})[k]||k; }
 function profilName(k){ return (KOMMERLING.profils[k]||{}).label||k; }
 function facesName(k){ return ({'1':'Coloris une face (extérieur)','2':'Coloris deux faces'})[k]||k; }
 
@@ -327,9 +332,9 @@ function lerpFen(anchors, key, s){
 function priceFor(g, c){
   const w = c.w||1000, h = c.h||1000, surf = Math.max(0.9,(w*h)/1e6);
   if(g === 'volet'){
-    let ppm = ({sangle:95,treuil:120,filaire:175,radio:225,solaire:320})[c.moteur]||175;
-    if(c.lames === 'alu') ppm += 30;
-    if(c.moteur === 'solaire') ppm += (BUBENDORFF.gammes[c.gamme]||{}).add||0; // supplément gamme Bubendorff
+    let ppm = ({filaire:175,radio:225,solaire:320})[c.moteur]||225;
+    ppm += (BUBENDORFF.modeles[c.modele]||{}).add||0;   // supplément du modèle iD4
+    if(c.lames === 'orientable') ppm += 45;              // lames orientables Bubendorff
     let p = ppm * surf;
     if(!['blanc','gris'].includes(c.couleur)) p *= 1.08;
     return Math.round(p/5)*5;
@@ -376,8 +381,7 @@ function totals(){
 function itemTitle(it){
   if(it.product === 'piece') return it.name;
   if(it.product === 'volet'){
-    const brand = it.cfg.moteur === 'solaire' ? ' Bubendorff' : '';
-    return `Volet roulant ${couleurName(it.cfg.couleur).split(' ')[0].toLowerCase()}${brand}`;
+    return `Volet ${modeleName(it.cfg.modele)}`;
   }
   const brand = it.cfg.matiere === 'pvc' ? ' Kömmerling 76' : '';
   return `Fenêtre ${matiereName(it.cfg.matiere)}${brand} ${ouvertureName(it.cfg.ouverture).toLowerCase()}`;
@@ -385,8 +389,7 @@ function itemTitle(it){
 function itemSub(it){
   if(it.product === 'piece') return 'Pièce Bubendorff · ' + (it.cat||'accessoire');
   if(it.product === 'volet'){
-    const g = it.cfg.moteur === 'solaire' ? gammeName(it.cfg.gamme)+' · ' : '';
-    return `${it.cfg.w}×${it.cfg.h} mm · ${g}${moteurName(it.cfg.moteur)} · pose ${poseName(it.cfg.pose)} · ${couleurName(it.cfg.couleur)}`;
+    return `${it.cfg.w}×${it.cfg.h} mm · ${moteurName(it.cfg.moteur)} · lames ${lamesName(it.cfg.lames).toLowerCase()} · pose ${poseName(it.cfg.pose)} · ${couleurName(it.cfg.couleur)}`;
   }
   const p = it.cfg.matiere === 'pvc' ? profilName(it.cfg.profil)+' · ' : '';
   const f = it.cfg.couleur !== 'blanc' ? ' · '+facesName(it.cfg.faces) : '';
@@ -448,11 +451,26 @@ function prevStep(){ S.step = Math.max(0, (S.step || 0) - 1); render(); }
 function setTheme(t){ S.theme = t; render(); }
 function setProduct(p){ S.product = p; S.step = 0; render(); }
 
+// garde une config volet cohérente avec le modèle iD4 choisi (pose / motorisation / lames)
+function clampVolet(v){
+  const m = BUBENDORFF.modeles[v.modele] || BUBENDORFF.modeles.mono;
+  if(!m.poses.includes(v.pose))     v.pose   = m.poses[0];
+  if(!m.moteurs.includes(v.moteur)) v.moteur = m.moteurs[0];
+  if(!m.orientable && v.lames === 'orientable') v.lames = 'standard';
+  return v;
+}
+function setModele(k){
+  if(!BUBENDORFF.modeles[k]) return;
+  S.volet = clampVolet({...S.volet, modele:k});
+  render();
+}
+
 function pickProduct(product, preset){
   S.navOpen = false;
   S.step = 0;
   S.product = product;
   if(preset) S[product] = {...S[product], ...preset};
+  if(product === 'volet') S.volet = clampVolet({...S.volet});
   S.screen = 'config';
   window.scrollTo(0,0);
   render();
@@ -581,11 +599,11 @@ function previewPanel(){
 function summaryRows(){
   const g = S.product, cur = S[g];
   const rows = g === 'volet' ? [
+    ['Modèle',     modeleName(cur.modele)],
     ['Dimensions', `${cur.w} × ${cur.h} mm`],
     ['Pose',       cap(poseName(cur.pose))],
     ['Motorisation', moteurName(cur.moteur)],
-    ...(cur.moteur === 'solaire' ? [['Gamme', gammeName(cur.gamme)+' — Bubendorff']] : []),
-    ['Lames',      cur.lames === 'alu' ? 'Aluminium' : 'PVC'],
+    ['Type de lames', lamesName(cur.lames)],
     ['Couleur',    couleurName(cur.couleur)]
   ] : [
     ['Dimensions', `${cur.w} × ${cur.h} mm`],
@@ -693,17 +711,13 @@ function renderHeader(){
 // BRAND SHOWCASE SECTIONS
 // ─────────────────────────────────────────────────────────────────────────────
 function brandBubendorff(){
-  const g = BUBENDORFF.gammes;
-  const big = [
-    { ...g.mono,       preset:{moteur:'solaire',gamme:'mono'},       cta:true },
-    { ...g.orientable, preset:{moteur:'solaire',gamme:'orientable'}, cta:true }
-  ];
-  const cards = big.map(p => `
-    <div onclick="pickProduct('volet',${JSON.stringify(p.preset).replace(/"/g,"'")})" style="cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column" class="card-hover">
-      <div style="aspect-ratio:4/3;background:linear-gradient(160deg,#eef1f4,#dde3e8);display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line)">
-        <img src="${ASSET}${p.img}" alt="${p.label}" loading="lazy" style="height:100%;object-fit:contain;padding:18px">
+  const cards = Object.entries(BUBENDORFF.modeles).map(([key,p]) => `
+    <div onclick="pickProduct('volet',{modele:'${key}',moteur:'solaire'})" style="cursor:pointer;background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:flex;flex-direction:column" class="card-hover">
+      <div style="aspect-ratio:4/3;background:linear-gradient(160deg,#eef1f4,#dde3e8);display:flex;align-items:center;justify-content:center;border-bottom:1px solid var(--line);overflow:hidden">
+        <img src="${ASSET}${p.img}" alt="${p.label}" loading="lazy" style="width:100%;height:100%;object-fit:${p.fit};${p.fit==='contain'?'padding:18px':''}">
       </div>
       <div style="padding:18px 20px 20px">
+        <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:5px">${p.badge}</div>
         <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;margin:0 0 6px;color:var(--ink)">${p.label}</h3>
         <p style="font-size:13.5px;line-height:1.5;color:var(--muted);margin:0 0 12px">${p.desc}</p>
         <span style="font-size:13.5px;font-weight:700;color:var(--accent)">Configurer →</span>
@@ -783,8 +797,8 @@ function brandKommerling(){
 // ─────────────────────────────────────────────────────────────────────────────
 function renderHome(){
   const prods = [
-    { tag:'Bubendorff',    title:'Volet solaire Mono ID4',     desc:'Lames alu, panneau solaire intégré, 100% autonome.',  from:'320 €/m²', p:'volet',   img:'bubendorff-mono-id4-solaire.png',            fit:'contain', preset:{moteur:'solaire',gamme:'mono'}       },
-    { tag:'Bubendorff',    title:'Volet solaire orientable',   desc:'Lames orientables : lumière et aération maîtrisées.', from:'365 €/m²', p:'volet',   img:'bubendorff-mono-id4-solaire-orientable.png', fit:'contain', preset:{moteur:'solaire',gamme:'orientable'} },
+    { tag:'Bubendorff',    title:'Volet solaire MONO iD4',     desc:'Lames alu, panneau solaire intégré, 100% autonome.',  from:'320 €/m²', p:'volet',   img:'bubendorff-mono-id4-solaire.png',            fit:'contain', preset:{modele:'mono',lames:'standard',moteur:'solaire'}   },
+    { tag:'Bubendorff',    title:'MONO iD4 orientable',        desc:'Lames orientables : lumière et aération maîtrisées.', from:'365 €/m²', p:'volet',   img:'bubendorff-mono-id4-solaire-orientable.png', fit:'contain', preset:{modele:'mono',lames:'orientable',moteur:'solaire'} },
     { tag:'Kömmerling 76', title:'Fenêtre PVC 76 MD',          desc:'Profilé 6 chambres, triple joint — Uw ≥ 0,77.',      from:'275 €/m²', p:'fenetre', img:'kommerling-76-md.png',                       fit:'cover',   preset:{matiere:'pvc',profil:'76md'}  },
   ];
 
@@ -877,7 +891,7 @@ function renderHome(){
     <!-- deux façons de commander -->
     <section style="max-width:1240px;margin:0 auto;padding:30px 32px 8px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
-        <div onclick="pickProduct('volet',{moteur:'solaire',gamme:'mono'})" style="cursor:pointer;background:var(--ink);color:#fff;border-radius:16px;padding:34px 32px;display:flex;flex-direction:column;justify-content:space-between;min-height:170px" class="card-hover">
+        <div onclick="pickProduct('volet',{modele:'mono',moteur:'solaire'})" style="cursor:pointer;background:var(--ink);color:#fff;border-radius:16px;padding:34px 32px;display:flex;flex-direction:column;justify-content:space-between;min-height:170px" class="card-hover">
           <div>
             <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:23px;font-weight:800;letter-spacing:-.02em;margin:0 0 8px">Configurer un volet sur mesure</h3>
             <p style="font-size:14.5px;line-height:1.55;color:rgba(255,255,255,.75);margin:0">Volets solaires Bubendorff & fenêtres Kömmerling, fabriqués à vos dimensions exactes.</p>
@@ -1016,9 +1030,35 @@ function renderHome(){
 function renderConfig(){
   const g = S.product, cur = S[g];
   const isVolet = g === 'volet';
+  const M = BUBENDORFF.modeles[cur.modele] || BUBENDORFF.modeles.mono;   // modèle iD4 courant (volet)
   const TAB_ON  = 'border:none;border-radius:7px;padding:11px 24px;font-size:14.5px;font-weight:700;cursor:pointer;background:var(--ink);color:#fff;';
   const TAB_OFF = 'border:none;border-radius:7px;padding:11px 24px;font-size:14.5px;font-weight:700;cursor:pointer;background:transparent;color:var(--muted);';
   const unitPrice = priceFor(g, cur);
+
+  // Étape 1 volet — choix du modèle Bubendorff iD4
+  const secModele = `
+    <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0;color:var(--ink)">Modèle de volet roulant</h3>
+        <span style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:999px">Bubendorff iD4</span>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin:0 0 18px;line-height:1.5">${BUBENDORFF.note}</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+        ${Object.entries(BUBENDORFF.modeles).map(([key,m]) => {
+          const sel = cur.modele === key;
+          return `<div onclick="setModele('${key}')" style="${cardStyle(sel)}padding:0;overflow:hidden">
+            <div style="aspect-ratio:4/3;background:linear-gradient(160deg,#eef1f4,#dde3e8);display:flex;align-items:center;justify-content:center;overflow:hidden;border-bottom:1px solid var(--line)">
+              <img src="${ASSET}${m.img}" alt="${m.label}" loading="lazy" style="width:100%;height:100%;object-fit:${m.fit};${m.fit==='contain'?'padding:14px':''}">
+            </div>
+            <div style="padding:15px 16px 16px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);margin-bottom:5px">${m.badge}${m.add?` · +${m.add} €/m²`:''}</div>
+              <div style="font-size:15.5px;font-weight:700;color:var(--ink)">${m.label}</div>
+              <div style="font-size:12.5px;color:var(--muted);line-height:1.45;margin-top:4px">${m.desc}</div>
+            </div>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
 
   const secDims = `
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px">
@@ -1045,52 +1085,43 @@ function renderConfig(){
       </div>
     </div>`;
 
+  const poseOpts = [
+    {key:'renovation', label:'Rénovation',  desc:'Coffre extérieur en applique'},
+    {key:'tunnel',     label:'Tunnel',      desc:'Pose dans coffre maçonné'},
+    {key:'linteau',    label:'Sous linteau', desc:'Caisson menuisé existant'}
+  ].filter(o => M.poses.includes(o.key));
   const secPose = `
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px">
-      <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0 0 18px;color:var(--ink)">Type de pose</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
-        ${optCards('volet','pose',[
-          {key:'renovation', label:'Rénovation',  desc:'Coffre extérieur en applique'},
-          {key:'tunnel',     label:'Tunnel',      desc:'Pose dans coffre maçonné'},
-          {key:'linteau',    label:'Sous linteau', desc:'Caisson menuisé existant'}
-        ])}
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+        <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0;color:var(--ink)">Type de pose</h3>
+        <span style="font-size:11px;font-weight:600;color:var(--muted)">compatible ${M.label}</span>
+      </div>
+      <p style="font-size:13px;color:var(--muted);margin:0 0 18px;line-height:1.5">Poses disponibles pour le modèle sélectionné.</p>
+      <div style="display:grid;grid-template-columns:repeat(${poseOpts.length},1fr);gap:12px">
+        ${optCards('volet','pose',poseOpts)}
       </div>
     </div>`;
 
+  const motorOpts = [
+    {key:'filaire', label:'Filaire',           desc:'Interrupteur mural',    price:'175 €/m²'},
+    {key:'radio',   label:'Radio',             desc:'Télécommande sans fil', price:'225 €/m²'},
+    {key:'solaire', label:'Solaire Bubendorff', desc:'Autonome, sans câblage', price:'320 €/m²'}
+  ].filter(o => M.moteurs.includes(o.key));
   const secMotor = `
-    <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;${cur.moteur === 'solaire' ? 'margin-bottom:20px' : ''}">
-      <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0 0 18px;color:var(--ink)">Motorisation</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-        ${optCards('volet','moteur',[
-          {key:'sangle',  label:'Manuel sangle', desc:'Enroulement par sangle',    price:'95 €/m²'},
-          {key:'treuil',  label:'Treuil',        desc:'Manivelle, sans électricité', price:'120 €/m²'},
-          {key:'filaire', label:'Filaire',       desc:'Interrupteur mural',         price:'175 €/m²'},
-          {key:'radio',   label:'Radio',         desc:'Télécommande sans fil',      price:'225 €/m²'},
-          {key:'solaire', label:'Solaire Bubendorff', desc:'Autonome, sans câblage', price:'320 €/m²'}
-        ])}
-      </div>
-    </div>
-    ${cur.moteur === 'solaire' ? `
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
-        <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0;color:var(--ink)">Gamme Bubendorff</h3>
-        <span style="font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);background:var(--accent-soft);padding:4px 9px;border-radius:999px">Bubendorff</span>
+        <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0;color:var(--ink)">Motorisation</h3>
+        <span style="font-size:11px;font-weight:600;color:var(--muted)">compatible ${M.label}</span>
       </div>
-      <p style="font-size:13px;color:var(--muted);margin:0 0 18px;line-height:1.5">${BUBENDORFF.note}</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
-        ${Object.entries(BUBENDORFF.gammes).map(([key,v]) => {
-          const sel = cur.gamme === key;
-          return `<div onclick="setField('volet','gamme','${key}')" style="${cardStyle(sel)}display:flex;gap:13px;align-items:center">
-            <img src="${ASSET}${v.img}" alt="${v.label}" style="width:40px;height:64px;object-fit:contain;flex-shrink:0">
-            <div>
-              <div style="font-size:14.5px;font-weight:700;color:var(--ink)">${v.label}${v.add?` <span style="color:var(--accent);font-size:12.5px">+${v.add} €/m²</span>`:''}</div>
-              <div style="font-size:12.5px;color:var(--muted);line-height:1.4;margin-top:3px">${v.desc}</div>
-            </div>
-          </div>`;
-        }).join('')}
+      <p style="font-size:13px;color:var(--muted);margin:0 0 18px;line-height:1.5">Motorisations Bubendorff disponibles pour ce modèle.${M.add?` <span style="color:var(--ink);font-weight:600">Supplément modèle : +${M.add} €/m².</span>`:''}</p>
+      <div style="display:grid;grid-template-columns:repeat(${motorOpts.length},1fr);gap:12px">
+        ${optCards('volet','moteur',motorOpts)}
       </div>
-    </div>` : ''}`;
+    </div>`;
 
+  const lamesOpts = M.orientable
+    ? [{key:'standard',label:'Standard ajourées'},{key:'orientable',label:'Orientables · +45 €/m²'}]
+    : [{key:'standard',label:'Standard ajourées'}];
   const secFinVolet = `
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:20px">
       <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0 0 6px;color:var(--ink)">Couleur du tablier</h3>
@@ -1100,8 +1131,9 @@ function renderConfig(){
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px">
         <div>
-          <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;margin:0 0 14px;color:var(--ink)">Matériau des lames</h3>
-          <div style="display:flex;gap:12px">${toggleCards('volet','lames',[{key:'pvc',label:'PVC'},{key:'alu',label:'Aluminium'}])}</div>
+          <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;margin:0 0 4px;color:var(--ink)">Type de lames</h3>
+          <p style="font-size:12.5px;color:var(--muted);margin:0 0 12px;line-height:1.45">${cur.lames === 'orientable' ? 'Une lame sur deux orientable : vue et protection solaire.' : 'Lames ajourées : occultation totale ou position d’aération.'}</p>
+          <div style="display:flex;gap:12px">${toggleCards('volet','lames',lamesOpts)}</div>
         </div>
         <div>
           <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;margin:0 0 14px;color:var(--ink)">Sens de manœuvre</h3>
@@ -1206,7 +1238,7 @@ function renderConfig(){
 
   // étapes du configurateur
   const steps = isVolet
-    ? [ {label:'Dimensions', html:secDims}, {label:'Pose', html:secPose}, {label:'Motorisation', html:secMotor}, {label:'Finitions', html:secFinVolet} ]
+    ? [ {label:'Modèle', html:secModele}, {label:'Pose', html:secPose}, {label:'Mesures', html:secDims}, {label:'Finitions', html:secFinVolet}, {label:'Motorisation', html:secMotor} ]
     : [ {label:'Dimensions', html:secDims}, {label:'Ouverture', html:secOuverture}, {label:'Profilé', html:secMateriau}, {label:'Finitions', html:secFinFenetre} ];
   const step = Math.min(Math.max(S.step || 0, 0), steps.length - 1);
 
@@ -1391,7 +1423,7 @@ function renderPieces(){
         <div style="font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin-bottom:10px">Rénovation & dépannage · Bubendorff</div>
         <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-size:38px;font-weight:800;letter-spacing:-.03em;margin:0;color:var(--ink)">Moteurs, kits & pièces Bubendorff</h1>
       </div>
-      <button onclick="pickProduct('volet',{moteur:'solaire',gamme:'mono'})" class="neon-btn" style="padding:12px 20px;font-size:14px">← Plutôt un volet sur mesure</button>
+      <button onclick="pickProduct('volet',{modele:'mono',moteur:'solaire'})" class="neon-btn" style="padding:12px 20px;font-size:14px">← Plutôt un volet sur mesure</button>
     </div>
     <p style="font-size:16px;color:var(--muted);margin:0 0 30px;max-width:640px;line-height:1.6">Vous rénovez ou dépannez un volet existant ? Commandez directement vos moteurs, kits de motorisation, commandes et adaptations Bubendorff — ou configurez un volet neuf sur mesure.</p>
 

@@ -63,7 +63,8 @@
       "Bash(curl -s -o hanken-grotesk-latin.woff2 \"https://fonts.gstatic.com/s/hankengrotesk/v12/ieVn2YZDLWuGJpnzaiwFXS9tYtpd59CxCis4.woff2\")",
       "Bash(curl -s -o schibsted-grotesk-latin-ext.woff2 \"https://fonts.gstatic.com/s/schibstedgrotesk/v7/Jqz55SSPQuCQF3t8uOwiUL-taUTtap9IayojdSFOd1I.woff2\")",
       "Bash(curl -s -o schibsted-grotesk-latin.woff2 \"https://fonts.gstatic.com/s/schibstedgrotesk/v7/Jqz55SSPQuCQF3t8uOwiUL-taUTtap9GayojdSFO.woff2\")",
-      "Bash(file *.woff2)"
+      "Bash(file *.woff2)",
+      "WebFetch(domain:doc.bubendorff.com)"
     ]
   }
 }

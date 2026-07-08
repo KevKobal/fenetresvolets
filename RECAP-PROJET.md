@@ -470,3 +470,34 @@ panier : 1 566 € + 109 € = 1 675 € ✓, badge = 3 = « 3 article(s) » ✓
   condition étendue `!['fixe','soufflet'].includes(cur.ouverture)` (grille + bloc). **Hauteur de poignée
   conservée** (soufflet a une poignée). Aucune traverse (mullion) dans l'aperçu (réservé au 2v).
 - Vérifié : 0 erreur console, 4 cartes, prix soufflet = 1v, poignée visible, sens masqué, panier OK.
+
+### Configurateur VOLET refondu — gamme Bubendorff iD4 (8 juillet 2026, suite)
+Restructuration complète du configurateur volet autour de la **gamme iD4** réelle (source doc.bubendorff.com 2026).
+- **Nouvel ordre en 5 étapes** : **Modèle → Pose → Mesures → Finitions → Motorisation** (avant : Dimensions →
+  Pose → Motorisation → Finitions).
+- **4 modèles iD4** dans `BUBENDORFF.modeles` (remplace l'ancien `gammes` mono/orientable) : chaque modèle
+  porte `img`, `fit`, `badge`, `desc`, `poses[]`, `moteurs[]`, `orientable`(bool), `add`(€/m²) :
+  - **MONO iD4** (`mono`) — rénovation · poses réno/tunnel · solaire/radio/filaire · orientable · +0
+  - **MONO iD4 ITE** (`ite`) — ITE · pose réno · solaire/filaire · orientable · +25 €/m²
+  - **TRADI iD4** (`tradi`) — neuf & réno · poses tunnel/linteau/réno · solaire/radio/filaire · orientable · +0
+  - **BLOC N/R iD4** (`bloc`) — bloc-baie · poses tunnel/linteau · solaire/filaire · non orientable · +35 €/m²
+- **Filtrage par modèle** : l'étape Pose et l'étape Motorisation ne montrent que les options compatibles
+  (`poseOpts`/`motorOpts` filtrés via `M.poses`/`M.moteurs`, grille `repeat(n,1fr)`). `setModele(k)` +
+  `clampVolet(v)` garantissent la cohérence (pose/moteur/lames recalés si le modèle change) ; `pickProduct`
+  clampe aussi pour les volets.
+- **État volet** : `{modele, w, h, pose, couleur, lames:'standard'|'orientable', moteur, sens, qty}`.
+  L'ancien champ `gamme` supprimé ; `lames` **repurposé** (était `pvc`/`alu`) → **type de lames**
+  `standard` (ajourées) / `orientable`. Le sélecteur « Matériau des lames PVC/Alu » remplacé par
+  « Type de lames » (orientable masqué si `!M.orientable`, ex. BLOC).
+- **Prix volet** (`priceFor`) : base moteur €/m² (**filaire 175 · radio 225 · solaire 320**, plus de manuel
+  sangle/treuil) **+ `modele.add` €/m² + orientable +45 €/m²**, ×1,08 si teinte ≠ blanc/gris, arrondi 5 €.
+  Ex. 1200×1400 blanc solaire : MONO 540 € · BLOC 595 € · MONO orientable 615 €.
+- **Encart « Gamme Bubendorff » supprimé** de l'étape motorisation (le choix modèle le remplace).
+- **Répercussions** : `summaryRows` (ligne **Modèle** + Type de lames, plus de Gamme), `itemTitle`
+  (« Volet MONO iD4 »), `itemSub` (dimensions · moteur · lames · pose · couleur), helpers `modeleName`/
+  `lamesName` (remplacent `gammeName`). Vitrine accueil `brandBubendorff` refaite → **4 cartes modèles**
+  (grille 2×2) ; grille produits accueil + « deux façons de commander » + bouton pièces → presets `{modele,…}`.
+- **Nouveaux visuels** `assets/` (bubendorff.com) : `bubendorff-mono-id4.png` (cutout), `bubendorff-tradi-id4.jpg`,
+  `bubendorff-mono-id4-ite.jpg`, `bubendorff-bloc-id4.jpg`, `bubendorff-orientable-lames.jpg`.
+- Vérifié au runtime : 0 erreur console, 5 étapes, 4 modèles, filtrage pose/moteur/lames par modèle OK,
+  clamp OK, prix cohérents, panier/récap corrects, accueil rendu.
