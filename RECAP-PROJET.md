@@ -4,11 +4,14 @@ Site e-commerce sur-mesure (volets roulants & fenêtres), 100 % autonome dans un
 `index.html` (HTML + JS vanilla, aucune dépendance, aucun build). Données réelles de marques
 récupérées en ligne, photos téléchargées en local dans `assets/`.
 
-Dernière mise à jour : **8 juillet 2026** — **audit sécurité & cohérence complet** + lot de correctifs
-(voir §12) : **mode démonstration** (bandeau + paiement CB désactivé via `DEMO`), **polices auto-hébergées**
-(RGPD, plus aucun appel Google), meta **SEO/Open Graph**, ventilation panier corrigée, badge panier en
-quantités, « dès 275 €/m² », sens d'ouverture masqué si châssis fixe. Historique : 5 juillet — GitHub Pages,
-passe responsive, retrait émojis, étude paiement (§11) ; 30 juin — PVC uniquement, page Aide à la mesure.
+Dernière mise à jour : **8 juillet 2026** — grosse session (détail chronologique en **§12**). Points clés :
+**audit sécurité/RGPD** + mode démo (`DEMO`), polices auto-hébergées, SEO/OG ; **pages légales**
+Mentions/CGV/Confidentialité ; **configurateur fenêtre** (sélecteur matériau retiré, type d'ouverture
+**Soufflet**, hauteur de poignée) ; **configurateur volet entièrement refondu** autour de la gamme
+**Bubendorff iD4** (4 modèles, étapes Modèle→Pose→Mesures→Finitions→Motorisation, **nuancier officiel**
+tablier+caisson, **tarif à la taille** 600→990 € + option orientable +300 €, visuels détourés).
+Les §2, §5, §8, §9 ci-dessous ont été **réalignés** sur cet état ; les sections historiques (28-30 juin,
+5 juillet) restent en **§11**. Historique : 5 juillet — GitHub Pages, responsive, émojis (§11) ; 30 juin — PVC only, Aide à la mesure.
 
 ---
 
@@ -44,13 +47,21 @@ Le site est **publié** et partageable :
 
 ## 2. Marques intégrées
 
-### Volets roulants solaires — **Bubendorff**
+### Volets roulants — **Bubendorff, gamme iD4**
 Fabricant français · moteur solaire SO · batterie lithium-ion 3,4 Ah (jusqu'à 6 semaines
 d'autonomie) · testé 30 000 cycles · SAV 30 ans · mode CLIMAT+.
-- **Mono ID4 Solaire** (lames alu standard) — dès 320 €/m²
-- **Mono ID4 Solaire orientable** (+45 €/m²) — dès 365 €/m²
-- Showcase d'accueil : + **Rolax solaire** (verrière) et **Store ZIP solaire**
-- Dans le configurateur volet : l'option « Solaire Bubendorff » affiche un encart **Gamme Bubendorff**.
+- **4 modèles iD4** (`BUBENDORFF.modeles`, source doc.bubendorff.com 2026) — voir §12 pour le détail :
+  **MONO iD4** (rénovation), **MONO iD4 ITE**, **TRADI iD4** (neuf & réno), **BLOC N/R iD4** (bloc-baie).
+  Chaque modèle porte ses **poses** et **motorisations** compatibles (filtrage dans le configurateur).
+- **Motorisations** : Solaire · Radio · Filaire (les 4 modèles). Plus de manuel sangle/treuil.
+- **Lames** : Standard ajourées ou **Orientables** (option). **Nuancier officiel Bubendorff** 14 teintes,
+  sélecteurs séparés **tablier** & **caisson** (voir §12).
+- **Tarif volet = uniquement la surface** (fourchette **600×600 → 600 €**, **~2500×2500 → 990 €** TTC) +
+  **option lames orientables forfait +300 €/volet**. Modèle/motorisation/couleur **n'impactent pas** le prix (voir §12).
+- Showcase d'accueil : **4 cartes modèles iD4** + **Rolax solaire** (verrière) et **Store ZIP solaire**.
+- Visuels modèles : cutouts transparents MONO/ITE/TRADI + BLOC détouré du catalogue (voir §12).
+- ⚠️ **Obsolète** (remplacé) : ancien système `gammes` mono/orientable, encart « Gamme Bubendorff »,
+  tarif au €/m² par moteur, lames PVC/alu — **tout cela n'existe plus** (refonte du 8 juillet, §12).
 
 ### Fenêtres PVC — **Kömmerling 76**
 Profilé allemand 76 mm · double/triple vitrage · coloris anthracite, chêne doré, gris, brun chocolat…
@@ -197,19 +208,17 @@ intégré aux totaux HT/TVA/livraison.
 
 ## 5. Page d'accueil — produits affichés
 
-Grille réduite à **3 produits** (sur demande, retrait du « Volet électrique radio », de la
-« Fenêtre aluminium » puis de la « Fenêtre PVC 76 MD ») :
-1. Volet solaire Mono ID4 (Bubendorff)
-2. Volet solaire orientable (Bubendorff)
-3. Fenêtre PVC 76 MD (Kömmerling)
+Grille de **3 produits** (cartes cliquables → configurateur avec preset `{modele,lames,moteur}` / `{matiere,profil}`) :
+1. Volet solaire **MONO iD4** (preset mono, lames standard, solaire)
+2. **MONO iD4 orientable** (preset mono, lames orientable, solaire)
+3. **Fenêtre PVC 76 MD** (Kömmerling)
 
-> Le volet électrique radio reste disponible dans le **configurateur** (motorisation radio) ; il a
-> seulement été retiré de la vitrine d'accueil.
->
-> ⚠️ **Plus aucune fenêtre en aluminium ni en bois** : seuls le **PVC Kömmerling** est proposé au
-> configurateur fenêtre (voir §2 — le Bois a lui aussi été retiré). Le footer liste « Fenêtre PVC ».
-> (Les mappings `matiereName`/prix gardent l'entrée `alu` de façon défensive pour d'éventuelles
-> données existantes, mais elle n'est plus proposée.)
+Les cartes n'affichent plus de prix « dès X €/m² » (retirées le 8 juillet, voir §12) → juste « Configurer → ».
+Plus bas, la **vitrine Bubendorff** présente les **4 modèles iD4** (grille 2×2) + Rolax/ZIP.
+
+> ⚠️ **Plus aucune fenêtre en aluminium ni en bois** : seul le **PVC Kömmerling** est proposé au
+> configurateur fenêtre. Le footer liste « Fenêtre PVC ». (Le mapping `matiereName` garde l'entrée
+> `alu` de façon défensive, non proposée.)
 
 ---
 
@@ -217,7 +226,7 @@ Grille réduite à **3 produits** (sur demande, retrait du « Volet électrique 
 
 | Dossier | Contenu | Source |
 |---|---|---|
-| `assets/` | 4 produits Bubendorff (mono, orientable, rolax, zip) + 2 profilés Kömmerling + façade/salon | bubendorff.com, fenetre24.com |
+| `assets/` | **4 cutouts modèles iD4** (`bubendorff-mono-id4.png`, `-mono-id4-ite.png`, `-tradi-id4.png`, `-bloc-id4.png`) + anciens `mono-id4-solaire(.png)`/`-orientable` (accueil) + rolax/zip + profilés Kömmerling + façade/salon | bubendorff.com, fenetre24.com |
 | `assets/pieces/` | 16 pièces Bubendorff (moteurs, kits, commandes, adaptations) | moteur-volet-roulant.fr |
 | `assets/kommerling/` | 13 photos Kömmerling 76 (profilés, coupes, intérieur/extérieur, coloris, ferrures, façade) | fenetre24.com |
 | `assets/Fabrication Fr/` | 3 photos d'usine : Usine, Usine 1, Usine 2 (carrousel savoir-faire) | fournies par l'utilisateur |
@@ -254,11 +263,14 @@ Le site est passé d'une **base crème/chaude** à une **base blanche froide**, 
   gauche, total TTC + bouton « Ajouter au panier » à droite, toujours visibles. `padding-bottom:120px`
   sur le `<main>` du config pour libérer l'espace.
 - Fil d'Ariane du configurateur enrichi (`Accueil / Volets roulants (ou Fenêtres) / Configurateur`).
-- **Configurateur en 4 étapes** avec stepper numéroté + barre de progression. État `S.step`,
-  fonctions `setStep/nextStep/prevStep` (reset à 0 dans `pickProduct`/`setProduct`). Étapes :
-  Dimensions → Pose/Ouverture → Motorisation/Matériau (gamme/profilé inclus si solaire/PVC) →
-  Finitions. Boutons « ← Précédent » / « Suivant → » (dernière étape : « Ajouter au panier »).
-  Sections découpées en variables `secDims/secPose/secMotor/secFinVolet/secOuverture/secMateriau/secFinFenetre`.
+- **Configurateur à étapes** avec stepper numéroté + barre de progression. État `S.step`,
+  fonctions `setStep/nextStep/prevStep` (reset à 0 dans `pickProduct`/`setProduct`).
+  - **Volet — 5 étapes** (refonte 8 juillet, §12) : **Modèle → Pose → Mesures → Finitions → Motorisation**.
+    Pose & Motorisation **filtrées par modèle** (`M.poses`/`M.moteurs`) ; `setModele`/`clampVolet` gardent la
+    cohérence. Sections `secModele/secPose/secDims/secFinVolet/secMotor`.
+  - **Fenêtre — 4 étapes** : **Dimensions → Ouverture → Profilé → Finitions**. Sections
+    `secDims/secOuverture/secMateriau/secFinFenetre`.
+  - Boutons « ← Précédent » / « Suivant → » (dernière étape : « Ajouter au panier »).
 - **Mini-panier déroulant** au survol du bouton Panier (`miniCart()`, classes `.cart-wrap`/`.cart-pop`,
   pont `::before` anti-perte de survol). Masqué ≤820px (pas de survol tactile → clic = page panier).
 
@@ -275,10 +287,13 @@ Le site est passé d'une **base crème/chaude** à une **base blanche froide**, 
 
 ## 9. Architecture du code (`index.html`)
 
-- **CONSTANTS** : `THEMES` (3 thèmes), `COL`, `BUBENDORFF`, `KOMMERLING`, `PIECES`
-- **STATE** : objet `S` (écran, produit, configs volet/fenetre, panier, paiement, `client`,
-  `cb` rappel)
-- **Écrans** : `home`, `config`, `pieces`, `cart`, `payment`, `confirm`, `callback`, `aide`, `livraison` (routés dans `_render`)
+- **CONSTANTS** : `DEMO` (mode démo), `THEMES` (3 thèmes), `COL` (+ nuancier Bubendorff `b###`),
+  `VOLET_TABLIER/_OR/_CAISSON`, `VOLET_PRIX_MIN/MAX`/`VOLET_S_MIN/MAX`/`VOLET_ORIENTABLE` (tarif volet),
+  `BUBENDORFF` (dont `modeles` iD4), `KOMMERLING`, `PIECES`, `FEN_PRIX`…
+- **STATE** : objet `S`. Config volet `{modele,w,h,pose,couleur,caisson,lames,moteur,sens,qty}` ·
+  fenêtre `{w,h,ouverture,couleur,faces,seuil,grille,poignee,matiere,vitrage,profil,sens,qty}`.
+- **Écrans** : `home`, `config`, `pieces`, `cart`, `payment`, `confirm`, `callback`, `aide`, `livraison`,
+  **`mentions`, `cgv`, `confidentialite`** (pages légales, §12) — routés dans `_render`.
 - **Livraison & frais de port / délais** (`totals()`) : frais calculés selon le contenu du panier —
   **pièces seules 9 €** (`FRAIS_PIECES`), **1 fenêtre ou 1 volet 49 €** (`FRAIS_1`), **2 menuiseries ou
   plus 109 €** (`FRAIS_PLUS`) ; **livraison offerte ≥ 3000 €** (`LIVRAISON_SEUIL`). Une menuiserie prime
@@ -318,6 +333,8 @@ Le site est passé d'une **base crème/chaude** à une **base blanche froide**, 
 
 - [x] ~~**Responsive mobile**~~ — fait + **passe complète mobile/desktop** (voir §11).
 - [x] ~~Configurateur **en étapes numérotées** avec progression~~ — fait (voir §8)
+- [x] ~~**Configurateur volet refondu** gamme iD4 (Modèle→Pose→Mesures→Finitions→Motorisation)~~ — fait (§12)
+- [x] ~~**Nuancier Bubendorff** tablier & caisson~~ · ~~**tarif volet à la taille** + option orientable +300 €~~ — fait (§12)
 - [x] ~~**Mini-panier déroulant** au survol~~ — fait (voir §8)
 - [x] ~~Page **Aide à la mesure**~~ — fait (écran `aide`, inspiré fenetre24.com, voir §9)
 - [x] ~~**Mise en ligne** partageable~~ — fait (GitHub Pages, voir §1)
@@ -333,7 +350,7 @@ Le site est passé d'une **base crème/chaude** à une **base blanche froide**, 
 - [ ] **Photos / schémas / vidéos** de la page Aide à la mesure (volontairement absents pour l'instant)
 - [ ] Logo **Caloriver** dédié (détourer le GIF, ou fournir un SVG/PNG transparent)
 - [ ] Derniers placeholders « photo — » restants (galerie inspiration)
-- [ ] Variantes électriques Bubendorff (radio/filaire/CLIMAT+) au catalogue, si souhaité
+- [ ] Remplir les champs `[À compléter]` des pages légales (raison sociale, SIRET, TVA, médiateur…) + relecture juridique
 
 ---
 
