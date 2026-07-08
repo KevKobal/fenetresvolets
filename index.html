@@ -553,6 +553,90 @@ function addToCart(){
 }
 function removeItem(id){ S.cart = S.cart.filter(i => i.id !== id); render(); }
 
+// Devis PDF — ouvre une vue propre imprimable ; le client enregistre en PDF via la
+// boîte d'impression du navigateur. Aucune dépendance : document autonome + window.print().
+function downloadDevis(){
+  if(!S.cart.length) return;
+  const T = totals();
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-FR', {day:'2-digit', month:'long', year:'numeric'});
+  const ref = 'MFV-' + now.getFullYear() + '-' + String(Math.floor(1000 + Math.random()*9000));
+  const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+  const rows = S.cart.map(it => `
+    <tr>
+      <td class="d"><div class="t">${esc(itemTitle(it))}</div><div class="s">${esc(itemSub(it))}</div></td>
+      <td class="c">${it.qty}</td>
+      <td class="r">${eur(it.unit)}</td>
+      <td class="r b">${eur(it.total)}</td>
+    </tr>`).join('');
+
+  const totalRow = (label, val, opts='') =>
+    `<tr class="${opts}"><td colspan="2"></td><td class="r lbl">${label}</td><td class="r">${val}</td></tr>`;
+
+  const demoNote = DEMO
+    ? `<p class="warn">Document généré depuis un site en démonstration : ce devis est fourni à titre indicatif, les commandes et paiements ne sont pas encore actifs.</p>`
+    : '';
+
+  const html = `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Devis ${ref}</title>
+<style>
+  *{box-sizing:border-box}
+  body{font-family:'Helvetica Neue',Arial,sans-serif;color:#16181B;margin:0;padding:38px 44px;font-size:13px;line-height:1.5}
+  .top{display:flex;justify-content:space-between;align-items:flex-start;border-bottom:2px solid #16181B;padding-bottom:18px;margin-bottom:24px}
+  .brand{font-size:22px;font-weight:800;letter-spacing:-.02em}
+  .brand span{color:#2563EB}
+  .brand small{display:block;font-weight:400;font-size:11px;color:#666;margin-top:4px;letter-spacing:0}
+  .meta{text-align:right;font-size:12px;color:#444}
+  .meta .ref{font-size:15px;font-weight:800;color:#16181B}
+  h1{font-size:17px;margin:0 0 16px}
+  table{width:100%;border-collapse:collapse}
+  thead th{text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:#666;border-bottom:1px solid #ccc;padding:0 8px 8px}
+  thead th.c{text-align:center}thead th.r{text-align:right}
+  tbody td{padding:12px 8px;border-bottom:1px solid #eee;vertical-align:top}
+  td.c{text-align:center;white-space:nowrap}td.r{text-align:right;white-space:nowrap}
+  td.d .t{font-weight:700;font-size:13.5px}
+  td.d .s{color:#666;font-size:12px;margin-top:3px}
+  td.b{font-weight:700}
+  tfoot td{padding:6px 8px;border:none}
+  tfoot td.lbl{color:#555}
+  tfoot tr.grand td{font-size:16px;font-weight:800;border-top:2px solid #16181B;padding-top:12px}
+  .notes{margin-top:28px;font-size:11.5px;color:#555;border-top:1px solid #eee;padding-top:16px}
+  .notes p{margin:0 0 6px}
+  .warn{background:#FEF3C7;border:1px solid #FCD34D;color:#92400E;padding:10px 12px;border-radius:6px;margin:18px 0 0;font-size:12px}
+  @media print{ body{padding:0} @page{margin:16mm} }
+</style></head><body>
+  <div class="top">
+    <div class="brand">mes<span>fenêtres</span>volets.fr<small>Volets roulants &amp; fenêtres sur mesure · Fabrication française</small></div>
+    <div class="meta"><div class="ref">${ref}</div><div>Devis du ${dateStr}</div><div>${esc(CONTACT_EMAIL)}</div></div>
+  </div>
+  <h1>Devis estimatif</h1>
+  <table>
+    <thead><tr><th>Produit</th><th class="c">Qté</th><th class="r">P.U. TTC</th><th class="r">Total TTC</th></tr></thead>
+    <tbody>${rows}</tbody>
+    <tfoot>
+      ${totalRow('Sous-total TTC', eur(T.sub))}
+      ${totalRow('Livraison à domicile', T.livraison === 0 ? 'Offerte' : eur(T.livraison))}
+      ${T.flashActive ? totalRow('Livraison Flash (+20%)', eur(T.flash)) : ''}
+      ${totalRow('dont TVA 20%', eur(T.tva))}
+      ${totalRow('Total TTC', eur(T.total), 'grand')}
+    </tfoot>
+  </table>
+  ${demoNote}
+  <div class="notes">
+    <p><strong>Délai de fabrication estimé :</strong> ${T.weeks} semaines à compter de la validation de commande.</p>
+    <p>Prix exprimés en euros TTC (TVA 20% incluse). Produits fabriqués sur mesure d'après les dimensions indiquées.</p>
+    <p>Devis indicatif valable 30 jours. Les fenêtres et volets sur mesure sont exclus du droit de rétractation (art. L221-28 3° C. conso.).</p>
+  </div>
+</body></html>`;
+
+  const w = window.open('', '_blank');
+  if(!w){ alert('Veuillez autoriser les fenêtres pop-up pour télécharger votre devis.'); return; }
+  w.document.write(html);
+  w.document.close();
+  w.focus();
+  setTimeout(() => { try{ w.print(); }catch(e){} }, 400);
+}
+
 function pieceCat(id){ for(const c in PIECES){ if(PIECES[c].items.some(i=>i.id===id)) return PIECES[c].label; } return ''; }
 function addPiece(id){
   const p = findPiece(id); if(!p) return;
@@ -1541,6 +1625,7 @@ function renderCart(){
           <span style="font-family:'Schibsted Grotesk',sans-serif;font-size:28px;font-weight:800;letter-spacing:-.02em;color:var(--ink)">${eur(T.total)}</span>
         </div>
         <button onclick="goPayment()" class="neon-btn" style="width:100%;padding:16px;font-size:16px">Valider et payer →</button>
+        <button onclick="downloadDevis()" style="width:100%;padding:13px;margin-top:10px;font-size:14px;font-weight:700;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:10px;cursor:pointer">Télécharger mon devis (PDF)</button>
         <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;font-size:12.5px;color:var(--muted)">Paiement sécurisé · CB · Visa · Mastercard</div>
       </aside>
     </div>
