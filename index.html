@@ -281,7 +281,7 @@ let S = {
   navOpen: false,   // menu hamburger mobile
   step: 0,          // étape du configurateur
   volet:   { w:1200, h:1400, pose:'renovation', couleur:'blanc', lames:'pvc', moteur:'radio',  gamme:'mono', sens:'droite', qty:1 },
-  fenetre: { w:1000, h:1150, ouverture:'2v',    couleur:'blanc', faces:'2', seuil:'non', grille:'non', matiere:'pvc', vitrage:'double', profil:'76md', sens:'droite', qty:1 },
+  fenetre: { w:1000, h:1150, ouverture:'2v',    couleur:'blanc', faces:'2', seuil:'non', grille:'non', poignee:'1000', matiere:'pvc', vitrage:'double', profil:'76md', sens:'droite', qty:1 },
   cart: [],
   flash: false,     // option Livraison Flash (délai raccourci, +20%)
   lastOrder: null,
@@ -392,7 +392,8 @@ function itemSub(it){
   const f = it.cfg.couleur !== 'blanc' ? ' · '+facesName(it.cfg.faces) : '';
   const sl = it.cfg.seuil === 'oui' ? ' · seuil 20 mm' : '';
   const gr = it.cfg.grille === 'oui' ? ' · grille ventilation' : '';
-  return `${it.cfg.w}×${it.cfg.h} mm · ${p}${vitrageName(it.cfg.vitrage)} · ${couleurName(it.cfg.couleur)}${f}${sl}${gr}`;
+  const pg = it.cfg.ouverture !== 'fixe' && it.cfg.poignee ? ` · poignée ${it.cfg.poignee} mm` : '';
+  return `${it.cfg.w}×${it.cfg.h} mm · ${p}${vitrageName(it.cfg.vitrage)} · ${couleurName(it.cfg.couleur)}${f}${sl}${gr}${pg}`;
 }
 function cliValid(){
   const c = S.client;
@@ -595,7 +596,8 @@ function summaryRows(){
     ['Couleur',    couleurName(cur.couleur)],
     ...(cur.couleur !== 'blanc' ? [['Application', facesName(cur.faces)]] : []),
     ...(cur.seuil === 'oui' ? [['Seuil', 'Alu 20 mm']] : []),
-    ...(cur.grille === 'oui' ? [['Ventilation', 'Grille intégrée']] : [])
+    ...(cur.grille === 'oui' ? [['Ventilation', 'Grille intégrée']] : []),
+    ...(cur.ouverture !== 'fixe' ? [['Hauteur de poignée', `${cur.poignee} mm`]] : [])
   ];
   return rows.map(([k,v]) => `
     <div style="display:flex;justify-content:space-between">
@@ -1186,6 +1188,19 @@ function renderConfig(){
         <p style="font-size:12.5px;color:var(--muted);margin:0 0 14px;line-height:1.5">Grille d'aération intégrée en traverse haute pour renouveler l'air sans ouvrir la fenêtre.</p>
         <div style="display:flex;gap:12px">${toggleCards('fenetre','grille',[{key:'non',label:'Sans grille'},{key:'oui',label:'Grille de ventilation · +30 €'}])}</div>
       </div>
+      ${cur.ouverture !== 'fixe' ? `
+      <div style="margin-top:22px;padding-top:22px;border-top:1px solid var(--line)">
+        <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;margin:0 0 4px;color:var(--ink)">Hauteur de poignée</h3>
+        <p style="font-size:12.5px;color:var(--muted);margin:0 0 14px;line-height:1.5">Position de la poignée mesurée depuis le bas de l'ouvrant, en millimètres.</p>
+        <div style="display:flex;gap:9px;flex-wrap:wrap">
+          ${['180','250','300','400','500','600','700','1000'].map(v => {
+            const sel = cur.poignee === v;
+            return `<div onclick="setField('fenetre','poignee','${v}')" style="${cardStyle(sel)}flex:0 0 auto;min-width:70px;text-align:center;padding:11px 14px">
+              <span style="font-size:14.5px;font-weight:700;color:var(--ink)">${v}</span><span style="font-size:11.5px;color:var(--muted)"> mm</span>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>` : ''}
     </div>`;
 
   // étapes du configurateur
