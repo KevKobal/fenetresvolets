@@ -326,6 +326,31 @@ let S = {
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
+// PERSISTANCE (localStorage) — panier & configuration conservés au rechargement /
+// au retour ultérieur. On ne stocke QUE le panier, les configs volet/fenêtre et le
+// produit courant : aucune donnée bancaire ni coordonnée personnelle (RGPD).
+// ─────────────────────────────────────────────────────────────────────────────
+const STORE_KEY = 'mfv_state_v1';
+function persist(){
+  try{
+    localStorage.setItem(STORE_KEY, JSON.stringify({
+      cart: S.cart, volet: S.volet, fenetre: S.fenetre, product: S.product
+    }));
+  }catch(e){ /* localStorage indisponible (mode privé, quota) → on ignore */ }
+}
+function loadPersisted(){
+  try{
+    const raw = localStorage.getItem(STORE_KEY);
+    if(!raw) return;
+    const d = JSON.parse(raw);
+    if(Array.isArray(d.cart)) S.cart = d.cart;
+    if(d.volet)   S.volet   = clampVolet({...S.volet,   ...d.volet});
+    if(d.fenetre) S.fenetre = {...S.fenetre, ...d.fenetre};
+    if(d.product === 'volet' || d.product === 'fenetre') S.product = d.product;
+  }catch(e){ /* données corrompues / schéma changé → on repart de l'état par défaut */ }
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // PURE HELPERS
 // ─────────────────────────────────────────────────────────────────────────────
 function th(){ return THEMES[S.theme]; }
@@ -442,7 +467,7 @@ function payValid(){
 // ─────────────────────────────────────────────────────────────────────────────
 // STATE MUTATIONS
 // ─────────────────────────────────────────────────────────────────────────────
-function render(){ _render(); }
+function render(){ persist(); _render(); }
 
 function go(screen){ S.screen = screen; S.navOpen = false; S.help.open = false; window.scrollTo(0,0); render(); }
 function goHome(){ go('home'); }
@@ -2465,6 +2490,7 @@ function savoirMount(){
 }
 
 // Boot
+loadPersisted();
 _render();
 </script>
 </body>
