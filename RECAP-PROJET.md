@@ -449,3 +449,12 @@ panier : 1 566 € + 109 € = 1 675 € ✓, badge = 3 = « 3 article(s) » ✓
 - Vérifié au runtime : 0 erreur console, 3 pages rendues, liens footer actifs, frais/délais dynamiques OK.
 - ⚠️ **Avant l'ouverture des ventes** : renseigner tous les `[À compléter]`, désigner un médiateur de la
   consommation, faire relire par un professionnel du droit.
+
+### Configurateur fenêtre — étape 3 simplifiée (8 juillet 2026, suite)
+- **Sélecteur « Matériau » supprimé** (sur demande) : carte unique « PVC Kömmerling · dès 275 €/m² »
+  redondante avec l'encart Profilé juste dessous. `secMateriau` ne rend plus que le bloc
+  **« Profilé Kömmerling 76 »** (toujours conditionné à `matiere==='pvc'`, valeur par défaut jamais
+  modifiée puisqu'il n'y a plus d'UI pour en changer).
+- **Étape renommée « Matériau » → « Profilé »** dans le stepper fenêtre.
+- Le récap latéral conserve sa ligne « Matériau : PVC » (info utile au client).
+- Vérifié : 0 erreur console, prix inchangé (739 € pour 1000×1150 par défaut), stepper à jour.

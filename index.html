@@ -1121,15 +1121,8 @@ function renderConfig(){
       </div>
     </div>`;
 
+  // Matériau unique (PVC Kömmerling) → plus de sélecteur redondant : l'étape affiche directement le profilé
   const secMateriau = `
-    <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;${cur.matiere === 'pvc' ? 'margin-bottom:20px' : ''}">
-      <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0 0 18px;color:var(--ink)">Matériau</h3>
-      <div style="display:grid;grid-template-columns:1fr;gap:12px">
-        ${optCards('fenetre','matiere',[
-          {key:'pvc', label:'PVC Kömmerling', desc:'dès 275 €/m²'}
-        ])}
-      </div>
-    </div>
     ${cur.matiere === 'pvc' ? `
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px">
       <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
@@ -1198,7 +1191,7 @@ function renderConfig(){
   // étapes du configurateur
   const steps = isVolet
     ? [ {label:'Dimensions', html:secDims}, {label:'Pose', html:secPose}, {label:'Motorisation', html:secMotor}, {label:'Finitions', html:secFinVolet} ]
-    : [ {label:'Dimensions', html:secDims}, {label:'Ouverture', html:secOuverture}, {label:'Matériau', html:secMateriau}, {label:'Finitions', html:secFinFenetre} ];
+    : [ {label:'Dimensions', html:secDims}, {label:'Ouverture', html:secOuverture}, {label:'Profilé', html:secMateriau}, {label:'Finitions', html:secFinFenetre} ];
   const step = Math.min(Math.max(S.step || 0, 0), steps.length - 1);
 
   const stepper = `<div style="display:flex;align-items:center;margin-bottom:26px">${steps.map((s,i) => {
