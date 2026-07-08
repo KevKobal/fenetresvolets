@@ -458,3 +458,15 @@ panier : 1 566 € + 109 € = 1 675 € ✓, badge = 3 = « 3 article(s) » ✓
 - **Étape renommée « Matériau » → « Profilé »** dans le stepper fenêtre.
 - Le récap latéral conserve sa ligne « Matériau : PVC » (info utile au client).
 - Vérifié : 0 erreur console, prix inchangé (739 € pour 1000×1150 par défaut), stepper à jour.
+
+### Configurateur fenêtre — type d'ouverture « Soufflet » (8 juillet 2026, suite)
+- **4ᵉ type d'ouverture ajouté** après Fixe : **Soufflet** (`key:'soufflet'`, « Bascule par le haut,
+  entrouverture partielle »). Grille du sélecteur passée `repeat(3,1fr)` → `repeat(4,1fr)` (responsive
+  déjà couvert : →2 col ≤1024, →1 col ≤560). `ouvertureName` enrichi (`soufflet:'Soufflet'`).
+- **Tarif = 1 vantail** automatiquement : `priceFor` mappe tout ce qui n'est pas `2v` sur la grille
+  `1v`, et le diviseur ÷1,5 ne s'applique qu'au `fixe` → soufflet 498 € (= 1v) vs fixe 332 € vs 2v 739 €
+  pour 1000×1150 blanc. **Couleurs identiques** (logique de teinte/faces commune à tous les types).
+- **Sens d'ouverture (gauche/droite) masqué** pour le soufflet (bascule par le haut, pas de sens latéral) —
+  condition étendue `!['fixe','soufflet'].includes(cur.ouverture)` (grille + bloc). **Hauteur de poignée
+  conservée** (soufflet a une poignée). Aucune traverse (mullion) dans l'aperçu (réservé au 2v).
+- Vérifié : 0 erreur console, 4 cartes, prix soufflet = 1v, poignée visible, sens masqué, panier OK.

@@ -310,7 +310,7 @@ function couleurName(k){ return ({blanc:'Blanc RAL 9016',creme:'Blanc crème RAL
 function moteurName(k){  return ({sangle:'Manuel sangle',treuil:'Treuil manivelle',filaire:'Électrique filaire',radio:'Radio télécommande',solaire:'Solaire autonome'})[k]||k; }
 function poseName(k){    return ({renovation:'rénovation',tunnel:'tunnel',linteau:'sous linteau'})[k]||k; }
 function matiereName(k){ return ({pvc:'PVC',alu:'Aluminium'})[k]||k; }
-function ouvertureName(k){ return ({'1v':'1 vantail','2v':'2 vantaux',oscillo:'Oscillo-battant',fixe:'Fixe'})[k]||k; }
+function ouvertureName(k){ return ({'1v':'1 vantail','2v':'2 vantaux',oscillo:'Oscillo-battant',fixe:'Fixe',soufflet:'Soufflet'})[k]||k; }
 function vitrageName(k){ return ({double:'Double vitrage',triple:'Triple vitrage'})[k]||k; }
 function gammeName(k){ return (BUBENDORFF.gammes[k]||{}).label||k; }
 function profilName(k){ return (KOMMERLING.profils[k]||{}).label||k; }
@@ -1114,11 +1114,12 @@ function renderConfig(){
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px">
       <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0 0 6px;color:var(--ink)">Type d'ouverture</h3>
       <p style="font-size:13.5px;color:var(--muted);margin:0 0 18px">Fonction <strong style="color:var(--ink)">oscillo-battant</strong> (bascule + ouverture) incluse d'office sur les versions ouvrantes.</p>
-      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px">
         ${optCards('fenetre','ouverture',[
-          {key:'1v',   label:'1 vantail', desc:'Ouverture à la française · oscillo-battant inclus'},
-          {key:'2v',   label:'2 vantaux', desc:'Ouverture à la française · oscillo-battant inclus'},
-          {key:'fixe', label:'Fixe',      desc:'Châssis non ouvrant'}
+          {key:'1v',       label:'1 vantail', desc:'Ouverture à la française · oscillo-battant inclus'},
+          {key:'2v',       label:'2 vantaux', desc:'Ouverture à la française · oscillo-battant inclus'},
+          {key:'fixe',     label:'Fixe',      desc:'Châssis non ouvrant'},
+          {key:'soufflet', label:'Soufflet',  desc:'Bascule par le haut, entrouverture partielle'}
         ])}
       </div>
     </div>`;
@@ -1167,12 +1168,12 @@ function renderConfig(){
       </div>` : ''}
     </div>
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px">
-      <div style="display:grid;grid-template-columns:${cur.ouverture !== 'fixe' ? '1fr 1fr' : '1fr'};gap:26px">
+      <div style="display:grid;grid-template-columns:${!['fixe','soufflet'].includes(cur.ouverture) ? '1fr 1fr' : '1fr'};gap:26px">
         <div>
           <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;margin:0 0 14px;color:var(--ink)">Vitrage</h3>
           <div style="display:flex;gap:12px">${toggleCards('fenetre','vitrage',[{key:'double',label:'Double'},{key:'triple',label:'Triple'}])}</div>
         </div>
-        ${cur.ouverture !== 'fixe' ? `
+        ${!['fixe','soufflet'].includes(cur.ouverture) ? `
         <div>
           <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;margin:0 0 14px;color:var(--ink)">Sens d'ouverture</h3>
           <div style="display:flex;gap:12px">${toggleCards('fenetre','sens',[{key:'gauche',label:'Gauche'},{key:'droite',label:'Droite'}])}</div>
