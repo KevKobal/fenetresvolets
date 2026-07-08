@@ -524,3 +524,11 @@ Restructuration complète du configurateur volet autour de la **gamme iD4** rée
 - **Répercussions** : `summaryRows` (lignes **Tablier** + **Caisson**), `itemSub` (tablier + caisson si ≠).
 - Vérifié au runtime : Radio sur ITE/BLOC, 14+14 teintes, filtre orientable (3) + clamp, tarifs T1/T2,
   aperçu coffre coloré (#2E2E2E), panier/récap corrects, 0 erreur console.
+
+### Volet — visuels modèles mis à jour (8 juillet 2026, suite)
+- **ITE** et **TRADI iD4** : remplacés par les **cutouts produit officiels** Bubendorff (fond transparent,
+  page lames-ajourables) → `bubendorff-mono-id4-ite.png` (anthracite) et `bubendorff-tradi-id4.png` (blanc,
+  coffre à tube). `fit:'contain'` (cohérent avec le MONO). Anciens `.jpg` supprimés.
+- **BLOC N/R iD4** : l'ancienne photo (coffret intérieur, inadaptée) remplacée par une **photo extérieure**
+  (volet anthracite sur grande baie vitrée, `bubendorff-bloc-id4.jpg`, `fit:'cover'`).
+- Vérifié : 4 images chargées (0 requête échouée), cartes cohérentes (3 cutouts + 1 photo).
