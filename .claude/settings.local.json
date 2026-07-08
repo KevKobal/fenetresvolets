@@ -68,7 +68,14 @@
       "Bash(/usr/bin/python3 -c ' *)",
       "Bash(qlmanage -t -s 1600 -o . nuancier.pdf)",
       "Bash(ls -la *.png)",
-      "Bash(file nuancier.pdf.png)"
+      "Bash(file nuancier.pdf.png)",
+      "Bash(find /private/tmp/claude-501 /tmp \"$HOME/Library/Caches\" -type f \\\\\\( -iname \"*.png\" -o -iname \"*.jpg\" -o -iname \"*.jpeg\" \\\\\\) -newermt \"-15 minutes\" 2>/dev/null | grep -viE 'nuancier|node_modules' | head -20; echo \"--- scratchpad ---\"; ls -la \"/private/tmp/claude-501/-Users-kob-Library-Mobile-Documents-com-apple-CloudDocs-Claude-Code-FenetresVolets-fr/53804c8b-c0fe-40dd-b1df-1c8cb9fce7d8/scratchpad\" 2>/dev/null)",
+      "Bash(find \"$HOME/Library/Application Support\" \"$HOME/.claude\" \"$HOME/Library/Caches\" /private/var/folders /tmp /private/tmp -type f \\\\\\( -iname \"*.png\" -o -iname \"*.jpg\" -o -iname \"*.jpeg\" -o -iname \"*.webp\" \\\\\\) -newermt \"-30 minutes\" 2>/dev/null | grep -viE 'nuancier|guide2026|kline|lv-bloc|imgs/' | head -30)",
+      "Bash(grep -iE '\\\\.\\(png|jpg|jpeg|webp|heic\\)$')",
+      "Bash(sort -k6)",
+      "Bash(python3)",
+      "Bash(mv bloc-extract.png bubendorff-bloc-id4.png)",
+      "Bash(rm -f bubendorff-bloc-id4.jpg \"N:B ID4.png\")"
     ]
   }
 }

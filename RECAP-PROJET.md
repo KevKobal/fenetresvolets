@@ -542,3 +542,11 @@ Restructuration complète du configurateur volet autour de la **gamme iD4** rée
   toggle : « Orientables · +300 € ».
 - Vérifié : 600×600=600 € · 2500×2500=990 € · 3000×2200=990 € · 1200×1400=685 € · invariance modèle/moteur/
   couleur ✓ · orientable +300 exact (685→985) · 0 erreur console.
+
+### BLOC N/R iD4 — visuel détouré depuis le catalogue (8 juillet 2026, suite)
+- Fenêtre bloc-baie **extraite** du visuel catalogue Bubendorff fourni (fond orange + texte + pastille).
+  Pipeline PIL : recadrage sur la fenêtre (exclut texte/pastille) → flood-fill du fond blanc (coins) →
+  color-key « warm » (r−b, r−g) pour retirer l'orange + ses bords anti-aliasés sans toucher aux gris neutres
+  → rebouchage des vitres (trous enclos) en gris verre → **ouverture morphologique** (érosion/plus grande
+  composante/dilatation) pour effacer les fins liserés d'ombre grise → autocrop. Résultat `bubendorff-bloc-id4.png`
+  (transparent, 225×509), `fit:'contain'` → cohérent avec MONO/ITE/TRADI. Ancien `.jpg` et source supprimés.
