@@ -1136,7 +1136,7 @@ function renderConfig(){
     </div>`;
 
   const lamesOpts = M.orientable
-    ? [{key:'standard',label:'Standard ajourées'},{key:'orientable',label:'Orientables · +45 €/m²'}]
+    ? [{key:'standard',label:'Standard ajourées'},{key:'orientable',label:'Orientables'}]
     : [{key:'standard',label:'Standard ajourées'}];
   const tablierKeys = cur.lames === 'orientable' ? VOLET_TABLIER_OR : VOLET_TABLIER;
   const lamesToggle = lamesOpts.map(o => {
