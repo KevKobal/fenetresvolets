@@ -11,6 +11,14 @@
 <meta property="og:url" content="https://kevkobal.github.io/fenetresvolets/">
 <meta property="og:image" content="https://kevkobal.github.io/fenetresvolets/assets/kommerling/76-facade.jpg">
 <meta property="og:locale" content="fr_FR">
+<meta property="og:site_name" content="mesfenetresvolets.fr">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="mesfenetresvolets.fr — Volets roulants & fenêtres sur mesure">
+<meta name="twitter:description" content="Volets roulants solaires Bubendorff et fenêtres PVC Kömmerling 76 sur mesure, fabriqués en France. Prix instantané en ligne.">
+<meta name="twitter:image" content="https://kevkobal.github.io/fenetresvolets/assets/kommerling/76-facade.jpg">
+<meta name="theme-color" content="#2563EB">
+<meta name="robots" content="index, follow">
+<link rel="canonical" href="https://kevkobal.github.io/fenetresvolets/">
 <style>
 /* Polices auto-hébergées (ex-Google Fonts — RGPD : plus aucun appel aux serveurs Google) */
 @font-face{font-family:'Hanken Grotesk';font-style:normal;font-weight:400 700;font-display:swap;src:url('assets/fonts/hanken-grotesk-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
@@ -163,6 +171,8 @@ html,body{overflow-x:hidden}
 .faq-item[open] .faq-plus::after{transform:translate(-50%,-50%) rotate(0deg)}
 .faq-a{padding:0 20px 20px;font-size:14.5px;line-height:1.65;color:var(--muted)}
 .faq-a strong{color:var(--ink)}
+/* Accessibilité — focus clavier visible sur tout élément interactif */
+a:focus-visible,button:focus-visible,summary:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,[tabindex]:focus-visible,[onclick]:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 </style>
 </head>
 <body>
@@ -844,8 +854,8 @@ function renderHeader(){
       <div style="margin-left:auto;display:flex;align-items:center;gap:16px">
         <button class="hdr-phone neon-btn" onclick="goCallback()" style="padding:10px 16px;font-size:14px;white-space:nowrap">${I.phone}Demander à être rappelé</button>
         <div class="cart-wrap">
-          <button onclick="goCart()" class="neon-btn">
-            <span class="cart-ico">${I.cart}</span>
+          <button onclick="goCart()" class="neon-btn" aria-label="Panier${cartQty?' — '+cartQty+' article(s)':''}">
+            <span class="cart-ico" aria-hidden="true">${I.cart}</span>
             <span class="cart-label">Panier ${badge}</span>
           </button>
           ${miniCart()}
@@ -2029,9 +2039,9 @@ function renderAide(){
 // ─────────────────────────────────────────────────────────────────────────────
 // LIVRAISON & DÉLAIS (sous-menu Aide)
 // ─────────────────────────────────────────────────────────────────────────────
-function renderFaq(){
+function faqData(){
   // Réponses branchées sur les constantes du site → toujours à jour.
-  const groups = [
+  return [
     { cat:'Commande & configurateur', items:[
       { q:'Comment passer commande ?', a:`Choisissez un produit (volet ou fenêtre), renseignez vos dimensions au millimètre dans le configurateur, personnalisez les finitions puis ajoutez au panier. Le prix <strong>TTC</strong> s'affiche en temps réel.${DEMO ? ' <strong>Le site est actuellement en démonstration : les commandes et paiements ne sont pas encore actifs.</strong>' : ''}` },
       { q:'Le prix affiché est-il définitif ?', a:`Oui. Il est calculé automatiquement selon vos dimensions exactes et les options choisies, et exprimé <strong>toutes taxes comprises</strong>. Il n'y a pas de devis à attendre.` },
@@ -2063,7 +2073,10 @@ function renderFaq(){
       { q:'Puis-je annuler ou me rétracter ?', a:`Les fenêtres et volets étant <strong>fabriqués sur-mesure</strong>, ils sont exclus du droit de rétractation (art. L221-28 3° du Code de la consommation). Les <strong>pièces détachées</strong> standard bénéficient du délai de rétractation de <strong>14 jours</strong>.` },
     ]},
   ];
+}
 
+function renderFaq(){
+  const groups = faqData();
   const groupsHtml = groups.map(g => `
     <section style="margin-bottom:30px">
       <h2 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.02em;margin:0 0 14px;color:var(--ink)">${g.cat}</h2>
@@ -2417,6 +2430,18 @@ function _render(){
   savoirMount();        // (ré)initialise le carrousel circulaire si présent
   sparklesMount();      // (ré)initialise le champ d'étincelles du hero si présent
   scrollVelocityMount();// (ré)initialise le texte défilant scroll-velocity du hero si présent
+  enhanceA11y();        // rend les éléments cliquables (span onclick…) focusables au clavier
+}
+
+// Accessibilité : les éléments interactifs construits avec `<span onclick>` (fil
+// d'Ariane, liens de footer, onglets…) ne sont ni focusables ni activables au clavier.
+// On les rend focusables (tabindex) et on les annonce comme boutons (role) après chaque
+// rendu ; l'activation Enter/Espace est gérée par un écouteur global unique (voir boot).
+function enhanceA11y(){
+  document.querySelectorAll('#root [onclick]:not(button):not(a):not([tabindex])').forEach(el => {
+    el.setAttribute('tabindex', '0');
+    if(!el.hasAttribute('role')) el.setAttribute('role', 'button');
+  });
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -2654,8 +2679,49 @@ function savoirMount(){
   savoirAutoplay();
 }
 
+// Données structurées (SEO) — Store + FAQPage. Injectées au boot ; Google exécute le
+// JS et les indexe (source unique : faqData(), pas de duplication).
+function injectJsonLd(){
+  try{
+    const strip = s => String(s).replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim();
+    const org = {
+      "@context":"https://schema.org", "@type":"Store",
+      "name":"mesfenetresvolets.fr",
+      "url":"https://kevkobal.github.io/fenetresvolets/",
+      "email":CONTACT_EMAIL,
+      "image":"https://kevkobal.github.io/fenetresvolets/assets/kommerling/76-facade.jpg",
+      "description":"Volets roulants solaires Bubendorff et fenêtres PVC Kömmerling 76 sur mesure, fabriqués en France.",
+      "areaServed":"FR", "priceRange":"€€"
+    };
+    const faq = {
+      "@context":"https://schema.org", "@type":"FAQPage",
+      "mainEntity": faqData().flatMap(g => g.items.map(it => ({
+        "@type":"Question", "name": strip(it.q),
+        "acceptedAnswer": { "@type":"Answer", "text": strip(it.a) }
+      })))
+    };
+    [org, faq].forEach(obj => {
+      const s = document.createElement('script');
+      s.type = 'application/ld+json';
+      s.textContent = JSON.stringify(obj);
+      document.head.appendChild(s);
+    });
+  }catch(e){ /* non bloquant */ }
+}
+
+// Accessibilité — activation clavier (Enter/Espace) des éléments cliquables non natifs.
+document.addEventListener('keydown', e => {
+  if(e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+  const el = e.target;
+  if(el && el.hasAttribute('onclick') && !el.matches('button,a,input,textarea,select')){
+    e.preventDefault();
+    el.click();
+  }
+});
+
 // Boot
 loadPersisted();
+injectJsonLd();
 _render();
 </script>
 </body>
