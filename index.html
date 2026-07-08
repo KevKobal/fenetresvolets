@@ -180,14 +180,23 @@ const THEMES = {
 };
 
 const COL = {
-  // base / tablier volet
+  // base / tablier volet (héritage)
   blanc:'#F1F0EA', gris:'#9CA0A2', anthracite:'#383E42', sable:'#D7C8A6', beige:'#CBBDA4',
   // nuancier menuiserie Kömmerling — teintes unies
   creme:'#E6DDC8', grisquartz:'#6B665E', basalte:'#4E5452', chocolat:'#45322E',
   vert:'#2E3A28', bleu:'#243140', rouge:'#5E2028',
   // nuancier menuiserie Kömmerling — décors bois
-  chene:'#A6722F', noyer:'#4F3422', winchester:'#6B543A'
+  chene:'#A6722F', noyer:'#4F3422', winchester:'#6B543A',
+  // nuancier officiel Bubendorff (MONO/TRADI/BLOC) — tablier & encadrement
+  b100:'#F1F0EA', b105:'#D5D6D1', b115:'#C3C7CA', b225:'#E9E4D6', b117:'#383E42', b240:'#4A3526', b310:'#A6722F', b403:'#2E2E2E',
+  b112:'#8A8986', b119:'#6B665E', b120:'#0F0F11', b125:'#4B4A41', b150:'#5E2028', b407:'#9A9992'
 };
+
+// Nuancier volet Bubendorff — clés partagées tablier / caisson (encadrement)
+const VOLET_TABLIER    = ['b100','b105','b115','b225','b117','b240','b310','b403','b112','b119','b120','b125','b150','b407'];
+const VOLET_TABLIER_OR = ['b100','b115','b117'];                                   // teintes dispo pour lames orientables
+const VOLET_CAISSON    = VOLET_TABLIER;                                            // l'encadrement accepte toute la palette
+const VOLET_BASE_COL   = ['b100','b105','b115','b225','b117','b240','b310','b403']; // Type 1 (tarif de base, sans supplément)
 
 // Grille tarifaire fenêtre PVC Kömmerling 76 (prix TTC) — 3 tailles de référence par type,
 // interpolées linéairement sur la surface (m²). blanc · f1 = coloris 1 face (ext) · f2 = 2 faces.
@@ -217,9 +226,9 @@ const BUBENDORFF = {
   // add = supplément €/m² du modèle · orientable = lames orientables proposées en option (+45 €/m²).
   modeles: {
     mono:  { label:'MONO iD4',      img:'bubendorff-mono-id4.png',     fit:'contain', badge:'Rénovation',        desc:'Coffre compact extérieur sans vis apparente, spécial rénovation — luminosité maximale.', poses:['renovation','tunnel'],            moteurs:['solaire','radio','filaire'], orientable:true,  add:0  },
-    ite:   { label:'MONO iD4 ITE',  img:'bubendorff-mono-id4-ite.jpg', fit:'cover',   badge:'Rénovation ITE',    desc:'Conçu pour l’isolation thermique par l’extérieur : performance thermique et fermeture réunies.', poses:['renovation'],                    moteurs:['solaire','filaire'],         orientable:true,  add:25 },
+    ite:   { label:'MONO iD4 ITE',  img:'bubendorff-mono-id4-ite.jpg', fit:'cover',   badge:'Rénovation ITE',    desc:'Conçu pour l’isolation thermique par l’extérieur : performance thermique et fermeture réunies.', poses:['renovation'],                    moteurs:['solaire','radio','filaire'], orientable:true,  add:25 },
     tradi: { label:'TRADI iD4',     img:'bubendorff-tradi-id4.jpg',    fit:'cover',   badge:'Neuf & rénovation', desc:'Volet traditionnel intégré au coffre menuisé, pour le neuf comme la rénovation.',               poses:['tunnel','linteau','renovation'], moteurs:['solaire','radio','filaire'], orientable:true,  add:0  },
-    bloc:  { label:'BLOC N/R iD4',  img:'bubendorff-bloc-id4.jpg',     fit:'cover',   badge:'Bloc-baie',         desc:'Bloc-baie design monobloc (menuiserie + volet) pour le neuf et la rénovation.',                 poses:['tunnel','linteau'],              moteurs:['solaire','filaire'],         orientable:false, add:35 }
+    bloc:  { label:'BLOC N/R iD4',  img:'bubendorff-bloc-id4.jpg',     fit:'cover',   badge:'Bloc-baie',         desc:'Bloc-baie design monobloc (menuiserie + volet) pour le neuf et la rénovation.',                 poses:['tunnel','linteau'],              moteurs:['solaire','radio','filaire'], orientable:false, add:35 }
   },
   autres: [
     { label:'Rolax solaire',     img:'bubendorff-rolax.jpg',       desc:'Volet roulant solaire pour toiture de véranda ou de verrière.' },
@@ -284,7 +293,7 @@ let S = {
   theme: 'azure',
   navOpen: false,   // menu hamburger mobile
   step: 0,          // étape du configurateur
-  volet:   { modele:'mono', w:1200, h:1400, pose:'renovation', couleur:'blanc', lames:'standard', moteur:'solaire', sens:'droite', qty:1 },
+  volet:   { modele:'mono', w:1200, h:1400, pose:'renovation', couleur:'b100', caisson:'b100', lames:'standard', moteur:'solaire', sens:'droite', qty:1 },
   fenetre: { w:1000, h:1150, ouverture:'2v',    couleur:'blanc', faces:'2', seuil:'non', grille:'non', poignee:'1000', matiere:'pvc', vitrage:'double', profil:'76md', sens:'droite', qty:1 },
   cart: [],
   flash: false,     // option Livraison Flash (délai raccourci, +20%)
@@ -310,7 +319,8 @@ function clamp(v, min, max){
 }
 function cap(s){ return s.charAt(0).toUpperCase() + s.slice(1); }
 
-function couleurName(k){ return ({blanc:'Blanc RAL 9016',creme:'Blanc crème RAL 9001',gris:'Gris alu',grisquartz:'Gris quartz RAL 7039',anthracite:'Gris anthracite RAL 7016',basalte:'Gris basalte RAL 7012',chocolat:'Brun chocolat RAL 8017',sable:'Sablé',beige:'Beige',chene:'Chêne doré',noyer:'Noyer',winchester:'Winchester',vert:'Vert sapin RAL 6009',bleu:'Bleu acier RAL 5011',rouge:'Rouge pourpre RAL 3004'})[k]||k; }
+function couleurName(k){ return ({blanc:'Blanc RAL 9016',creme:'Blanc crème RAL 9001',gris:'Gris alu',grisquartz:'Gris quartz RAL 7039',anthracite:'Gris anthracite RAL 7016',basalte:'Gris basalte RAL 7012',chocolat:'Brun chocolat RAL 8017',sable:'Sablé',beige:'Beige',chene:'Chêne doré',noyer:'Noyer',winchester:'Winchester',vert:'Vert sapin RAL 6009',bleu:'Bleu acier RAL 5011',rouge:'Rouge pourpre RAL 3004',
+  b100:'Blanc RAL 9016',b105:'Gris clair RAL 7035',b115:'Aluminium clair',b225:'Blanc perlé RAL 1013',b117:'Gris anthracite RAL 7016',b240:'Brun sépia RAL 8014',b310:'Chêne doré',b403:'Noir sablé',b112:'Aluminium gris RAL 9007',b119:'Gris quartz RAL 7039',b120:'Noir foncé RAL 9005',b125:'Gris terre d’ombre RAL 7022',b150:'Rouge pourpre RAL 3004',b407:'Gris sablé'})[k]||k; }
 function moteurName(k){  return ({sangle:'Manuel sangle',treuil:'Treuil manivelle',filaire:'Électrique filaire',radio:'Radio télécommande',solaire:'Solaire autonome'})[k]||k; }
 function poseName(k){    return ({renovation:'rénovation',tunnel:'tunnel',linteau:'sous linteau'})[k]||k; }
 function matiereName(k){ return ({pvc:'PVC',alu:'Aluminium'})[k]||k; }
@@ -336,7 +346,7 @@ function priceFor(g, c){
     ppm += (BUBENDORFF.modeles[c.modele]||{}).add||0;   // supplément du modèle iD4
     if(c.lames === 'orientable') ppm += 45;              // lames orientables Bubendorff
     let p = ppm * surf;
-    if(!['blanc','gris'].includes(c.couleur)) p *= 1.08;
+    if(!VOLET_BASE_COL.includes(c.couleur)) p *= 1.08;   // teinte tablier Type 2 (option)
     return Math.round(p/5)*5;
   } else {
     const surfF = (w*h)/1e6;                                   // surface réelle (sans plancher)
@@ -389,7 +399,8 @@ function itemTitle(it){
 function itemSub(it){
   if(it.product === 'piece') return 'Pièce Bubendorff · ' + (it.cat||'accessoire');
   if(it.product === 'volet'){
-    return `${it.cfg.w}×${it.cfg.h} mm · ${moteurName(it.cfg.moteur)} · lames ${lamesName(it.cfg.lames).toLowerCase()} · pose ${poseName(it.cfg.pose)} · ${couleurName(it.cfg.couleur)}`;
+    const cais = it.cfg.caisson && it.cfg.caisson !== it.cfg.couleur ? ` · caisson ${couleurName(it.cfg.caisson)}` : '';
+    return `${it.cfg.w}×${it.cfg.h} mm · ${moteurName(it.cfg.moteur)} · lames ${lamesName(it.cfg.lames).toLowerCase()} · pose ${poseName(it.cfg.pose)} · tablier ${couleurName(it.cfg.couleur)}${cais}`;
   }
   const p = it.cfg.matiere === 'pvc' ? profilName(it.cfg.profil)+' · ' : '';
   const f = it.cfg.couleur !== 'blanc' ? ' · '+facesName(it.cfg.faces) : '';
@@ -457,6 +468,8 @@ function clampVolet(v){
   if(!m.poses.includes(v.pose))     v.pose   = m.poses[0];
   if(!m.moteurs.includes(v.moteur)) v.moteur = m.moteurs[0];
   if(!m.orientable && v.lames === 'orientable') v.lames = 'standard';
+  // lames orientables : teinte tablier limitée au nuancier orientable
+  if(v.lames === 'orientable' && !VOLET_TABLIER_OR.includes(v.couleur)) v.couleur = 'b100';
   return v;
 }
 function setModele(k){
@@ -464,6 +477,7 @@ function setModele(k){
   S.volet = clampVolet({...S.volet, modele:k});
   render();
 }
+function setVoletLames(k){ S.volet = clampVolet({...S.volet, lames:k}); render(); }
 
 function pickProduct(product, preset){
   S.navOpen = false;
@@ -560,10 +574,10 @@ function toggleCards(g, key, opts){
   }).join('');
 }
 
-function swatches(g, keys){
+function swatches(g, field, keys){
   return keys.map(k => {
-    const sel = S[g].couleur === k;
-    return `<div onclick="setField('${g}','couleur','${k}')" title="${couleurName(k)}" style="cursor:pointer;border-radius:50%;padding:3px;border:2px solid ${sel?'var(--accent)':'transparent'};display:inline-flex">
+    const sel = S[g][field] === k;
+    return `<div onclick="setField('${g}','${field}','${k}')" title="${couleurName(k)}" style="cursor:pointer;border-radius:50%;padding:3px;border:2px solid ${sel?'var(--accent)':'transparent'};display:inline-flex">
       <span style="display:block;width:30px;height:30px;border-radius:50%;background:${COL[k]};box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)"></span>
     </div>`;
   }).join('');
@@ -576,13 +590,14 @@ function previewPanel(){
   let pw = maxW, ph = pw/aspect;
   if(ph > maxH){ ph = maxH; pw = ph*aspect; }
   const pcol = COL[cur.couleur]||'#ECEAE4';
+  const ccol = COL[cur.caisson]||'#383E42';   // teinte caisson (coffre + coulisses)
 
   let inner = '';
   if(g === 'volet'){
     inner = `
-      <div style="position:absolute;inset:0;border-left:7px solid #b9bdc1;border-right:7px solid #b9bdc1;border-radius:3px"></div>
+      <div style="position:absolute;inset:0;border-left:7px solid ${ccol};border-right:7px solid ${ccol};border-radius:3px"></div>
       <div style="position:absolute;left:7px;right:7px;top:18px;bottom:0;background:repeating-linear-gradient(180deg,${pcol} 0 9px,rgba(0,0,0,.12) 9px 11px)"></div>
-      <div style="position:absolute;top:0;left:0;right:0;height:18px;background:var(--ink);border-radius:3px 3px 0 0"></div>`;
+      <div style="position:absolute;top:0;left:0;right:0;height:18px;background:${ccol};border-radius:3px 3px 0 0;box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)"></div>`;
   } else {
     const mullion = cur.ouverture === '2v'
       ? `<div style="position:absolute;top:8px;bottom:8px;left:50%;width:6px;background:${pcol};transform:translateX(-50%);box-shadow:inset 0 0 0 1px rgba(0,0,0,.08)"></div>` : '';
@@ -604,7 +619,8 @@ function summaryRows(){
     ['Pose',       cap(poseName(cur.pose))],
     ['Motorisation', moteurName(cur.moteur)],
     ['Type de lames', lamesName(cur.lames)],
-    ['Couleur',    couleurName(cur.couleur)]
+    ['Tablier',    couleurName(cur.couleur)],
+    ['Caisson',    couleurName(cur.caisson)]
   ] : [
     ['Dimensions', `${cur.w} × ${cur.h} mm`],
     ['Ouverture',  ouvertureName(cur.ouverture)],
@@ -1122,18 +1138,30 @@ function renderConfig(){
   const lamesOpts = M.orientable
     ? [{key:'standard',label:'Standard ajourées'},{key:'orientable',label:'Orientables · +45 €/m²'}]
     : [{key:'standard',label:'Standard ajourées'}];
+  const tablierKeys = cur.lames === 'orientable' ? VOLET_TABLIER_OR : VOLET_TABLIER;
+  const lamesToggle = lamesOpts.map(o => {
+    const sel = cur.lames === o.key;
+    return `<div onclick="setVoletLames('${o.key}')" style="${cardStyle(sel)}flex:1;text-align:center">
+      <div style="font-size:14px;font-weight:700;color:var(--ink)">${o.label}</div>
+    </div>`;
+  }).join('');
   const secFinVolet = `
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:20px">
-      <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0 0 6px;color:var(--ink)">Couleur du tablier</h3>
-      <p style="font-size:13.5px;color:var(--muted);margin:0 0 18px">${couleurName(cur.couleur)}</p>
-      <div style="display:flex;gap:14px;flex-wrap:wrap">${swatches('volet',['blanc','gris','anthracite','sable','beige','chene','vert'])}</div>
+      <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0 0 4px;color:var(--ink)">Couleur du tablier</h3>
+      <p style="font-size:13.5px;color:var(--muted);margin:0 0 16px">${couleurName(cur.couleur)}${cur.lames === 'orientable' ? ' · <span style="color:var(--accent)">teintes lames orientables</span>' : ''}</p>
+      <div style="display:flex;gap:13px;flex-wrap:wrap">${swatches('volet','couleur',tablierKeys)}</div>
+      <div style="margin-top:24px;padding-top:22px;border-top:1px solid var(--line)">
+        <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0 0 4px;color:var(--ink)">Couleur du caisson</h3>
+        <p style="font-size:13.5px;color:var(--muted);margin:0 0 16px">${couleurName(cur.caisson)} — coffre & coulisses (nuancier encadrement)</p>
+        <div style="display:flex;gap:13px;flex-wrap:wrap">${swatches('volet','caisson',VOLET_CAISSON)}</div>
+      </div>
     </div>
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px">
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:26px">
         <div>
           <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;margin:0 0 4px;color:var(--ink)">Type de lames</h3>
           <p style="font-size:12.5px;color:var(--muted);margin:0 0 12px;line-height:1.45">${cur.lames === 'orientable' ? 'Une lame sur deux orientable : vue et protection solaire.' : 'Lames ajourées : occultation totale ou position d’aération.'}</p>
-          <div style="display:flex;gap:12px">${toggleCards('volet','lames',lamesOpts)}</div>
+          <div style="display:flex;gap:12px">${lamesToggle}</div>
         </div>
         <div>
           <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:18px;font-weight:700;margin:0 0 14px;color:var(--ink)">Sens de manœuvre</h3>
@@ -1186,7 +1214,7 @@ function renderConfig(){
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:20px">
       <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:20px;font-weight:700;margin:0 0 6px;color:var(--ink)">Couleur de menuiserie</h3>
       <p style="font-size:13.5px;color:var(--muted);margin:0 0 18px">${couleurName(cur.couleur)}${cur.couleur !== 'blanc' ? ' · '+facesName(cur.faces) : ''}</p>
-      <div style="display:flex;gap:14px;flex-wrap:wrap">${swatches('fenetre',['blanc','creme','grisquartz','anthracite','basalte','chocolat','vert','bleu','rouge','chene','noyer','winchester'])}</div>
+      <div style="display:flex;gap:14px;flex-wrap:wrap">${swatches('fenetre','couleur',['blanc','creme','grisquartz','anthracite','basalte','chocolat','vert','bleu','rouge','chene','noyer','winchester'])}</div>
       ${cur.couleur !== 'blanc' ? `
       <div style="margin-top:22px;padding-top:22px;border-top:1px solid var(--line)">
         <h4 style="font-family:'Schibsted Grotesk',sans-serif;font-size:15px;font-weight:700;margin:0 0 4px;color:var(--ink)">Application du coloris</h4>

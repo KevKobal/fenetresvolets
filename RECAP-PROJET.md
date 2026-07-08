@@ -501,3 +501,26 @@ Restructuration complète du configurateur volet autour de la **gamme iD4** rée
   `bubendorff-mono-id4-ite.jpg`, `bubendorff-bloc-id4.jpg`, `bubendorff-orientable-lames.jpg`.
 - Vérifié au runtime : 0 erreur console, 5 étapes, 4 modèles, filtrage pose/moteur/lames par modèle OK,
   clamp OK, prix cohérents, panier/récap corrects, accueil rendu.
+
+### Volet — Radio partout + nuancier Bubendorff officiel tablier & caisson (8 juillet 2026, suite)
+- **Motorisation Radio ajoutée à tous les modèles** : `ite` et `bloc` passent à `['solaire','radio','filaire']`
+  (les 4 modèles proposent désormais Solaire · Radio · Filaire).
+- **Nuancier officiel Bubendorff** (PDF NUANCIER VOLETS Fév. 2024, offre MONO-TRADI-BLOC) intégré. Rendu du PDF
+  via `qlmanage` (poppler absent). Clés `b###` ajoutées à `COL` + `couleurName` :
+  - **Tablier Type 1** (base, sans supplément) : Blanc 100 (9016) · Gris clair 105 (7035) · Aluminium clair 115 ·
+    Blanc perlé 225 (1013) · Gris anthracite 117 (7016) · Brun sépia 240 (8014) · Chêne doré 310 · Noir sablé 403.
+  - **Tablier Type 2** (option, +8 %) : Aluminium gris 112 (9007) · Gris quartz 119 (7039) · Noir foncé 120 (9005) ·
+    Gris terre d'ombre 125 (7022) · Rouge pourpre 150 (3004) · Gris sablé 407. → **14 teintes**.
+  - Constantes `VOLET_TABLIER` (14) · `VOLET_TABLIER_OR` (3 : b100/b115/b117, dispo lames orientables) ·
+    `VOLET_CAISSON` (= toute la palette) · `VOLET_BASE_COL` (Type 1, sans surcharge).
+- **Deux sélecteurs de couleur** dans les Finitions volet : **Couleur du tablier** + **Couleur du caisson**
+  (coffre & coulisses). `swatches(g, field, keys)` généralisé (2ᵉ arg = champ) ; appel fenêtre mis à jour.
+- **Filtre orientable** : si `lames === 'orientable'`, le tablier n'affiche que les 3 teintes orientables ;
+  `setVoletLames(k)` + `clampVolet` recalent la teinte (→ b100) si elle sort du nuancier orientable.
+- **État volet** : `couleur` défaut `b100`, nouveau champ **`caisson`** défaut `b100`.
+- **Tarif** : supplément Type 2 basé sur `VOLET_BASE_COL` (au lieu de `['blanc','gris']`). Ex. 1200×1400 mono
+  solaire : Blanc/Noir sablé (T1) 540 € · Rouge pourpre (T2) 580 €. Le caisson n'ajoute pas de supplément.
+- **Aperçu** : coffre + coulisses colorés à la teinte **caisson** (`COL[cur.caisson]`), tablier à la teinte tablier.
+- **Répercussions** : `summaryRows` (lignes **Tablier** + **Caisson**), `itemSub` (tablier + caisson si ≠).
+- Vérifié au runtime : Radio sur ITE/BLOC, 14+14 teintes, filtre orientable (3) + clamp, tarifs T1/T2,
+  aperçu coffre coloré (#2E2E2E), panier/récap corrects, 0 erreur console.
