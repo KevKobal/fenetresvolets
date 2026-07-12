@@ -195,7 +195,11 @@ const GARANTIE = 2;
 
 // Identité de l'entreprise (mentions légales, CGV) — confirmée par Kevin le 12 juillet 2026.
 const RAISON_SOCIALE = "S.A.S. L'ATELIER OXYGEN OUVERTURES";
-const FORME_JURIDIQUE = 'SAS';
+const FORME_JURIDIQUE = 'SASU';
+const FORME_JURIDIQUE_LONG = 'Société par actions simplifiée unipersonnelle';
+const CAPITAL_SOCIAL = '40 000,00 €';
+const VILLE_RCS = 'Nancy';
+const DIRECTEUR_PUBLICATION = 'Kevin GALLARD';
 const SIREN = '999 487 689';
 const SIRET = '999 487 689 00013';
 const TVA_INTRACOM = 'FR49999487689';
@@ -2245,11 +2249,11 @@ function renderMentions(){
   return legalShell('Mentions légales', 'Informations légales (LCEN)', 'Mentions légales', `
     ${legalSec('1. Éditeur du site', `
       ${P}Le site <strong style="color:var(--ink)">mesfenetresvolets.fr</strong> (le « Site ») est édité par :</p>
-      ${P}<strong style="color:var(--ink)">${RAISON_SOCIALE}</strong>, ${FORME_JURIDIQUE}, au capital de ${phFill('capital social')},
-      immatriculée au RCS de ${phFill('ville du RCS')} sous le numéro <strong style="color:var(--ink)">${SIREN}</strong> (SIRET ${SIRET}),
+      ${P}<strong style="color:var(--ink)">${RAISON_SOCIALE}</strong>, ${FORME_JURIDIQUE} (${FORME_JURIDIQUE_LONG}), au capital de <strong style="color:var(--ink)">${CAPITAL_SOCIAL}</strong>,
+      immatriculée au RCS de <strong style="color:var(--ink)">${VILLE_RCS}</strong> sous le numéro <strong style="color:var(--ink)">${SIREN}</strong> (SIRET ${SIRET}),
       dont le siège social est situé ${phFill('adresse du siège')}.</p>
       ${P}N° de TVA intracommunautaire : <strong style="color:var(--ink)">${TVA_INTRACOM}</strong>.</p>
-      ${P}Directeur de la publication : ${phFill('nom du directeur de la publication')}.</p>
+      ${P}Directeur de la publication : <strong style="color:var(--ink)">${DIRECTEUR_PUBLICATION}</strong>.</p>
       ${P}Contact : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a></p>`)}
     ${legalSec('2. Hébergement', `
       ${P}Le Site est hébergé par <strong style="color:var(--ink)">GitHub, Inc.</strong> (service GitHub Pages) —
