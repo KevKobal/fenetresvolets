@@ -203,6 +203,7 @@ const DIRECTEUR_PUBLICATION = 'Kevin GALLARD';
 const SIREN = '999 487 689';
 const SIRET = '999 487 689 00013';
 const TVA_INTRACOM = 'FR49999487689';
+const ADRESSE_SIEGE = 'communiquée sur demande'; // siège domicilié — adresse non publiée sur le Site (voir contact)
 const DEMO = true;              // site de démonstration : bandeau affiché + paiement CB désactivé (passer à false au lancement réel)
 
 // Base blanche froide partagée — l'accent change selon le thème (azure = bleu net par défaut)
@@ -2250,8 +2251,8 @@ function renderMentions(){
     ${legalSec('1. Éditeur du site', `
       ${P}Le site <strong style="color:var(--ink)">mesfenetresvolets.fr</strong> (le « Site ») est édité par :</p>
       ${P}<strong style="color:var(--ink)">${RAISON_SOCIALE}</strong>, ${FORME_JURIDIQUE} (${FORME_JURIDIQUE_LONG}), au capital de <strong style="color:var(--ink)">${CAPITAL_SOCIAL}</strong>,
-      immatriculée au RCS de <strong style="color:var(--ink)">${VILLE_RCS}</strong> sous le numéro <strong style="color:var(--ink)">${SIREN}</strong> (SIRET ${SIRET}),
-      dont le siège social est situé ${phFill('adresse du siège')}.</p>
+      immatriculée au RCS de <strong style="color:var(--ink)">${VILLE_RCS}</strong> sous le numéro <strong style="color:var(--ink)">${SIREN}</strong> (SIRET ${SIRET}).
+      Adresse du siège social : <strong style="color:var(--ink)">${ADRESSE_SIEGE}</strong>.</p>
       ${P}N° de TVA intracommunautaire : <strong style="color:var(--ink)">${TVA_INTRACOM}</strong>.</p>
       ${P}Directeur de la publication : <strong style="color:var(--ink)">${DIRECTEUR_PUBLICATION}</strong>.</p>
       ${P}Contact : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a></p>`)}
@@ -2291,7 +2292,7 @@ function renderCGV(){
       consommateur ou non professionnel (le « Client »). Toute commande vaut acceptation sans réserve des CGV en vigueur
       au jour de la commande.</p>`)}
     ${legalSec('Article 2 — Vendeur', `
-      ${P}<strong style="color:var(--ink)">${RAISON_SOCIALE}</strong> (${FORME_JURIDIQUE}) — SIRET ${SIRET} — ${phFill('adresse du siège')} —
+      ${P}<strong style="color:var(--ink)">${RAISON_SOCIALE}</strong> (${FORME_JURIDIQUE}) — SIRET ${SIRET} — siège social : ${ADRESSE_SIEGE} —
       contact : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a>.</p>`)}
     ${legalSec('Article 3 — Produits', `
       ${P}Le Site propose : <strong style="color:var(--ink)">(a)</strong> des volets roulants et fenêtres
@@ -2363,7 +2364,7 @@ function renderConfidentialite(){
   const P = `<p style="margin:0 0 10px">`;
   return legalShell('Confidentialité', 'Protection des données (RGPD)', 'Politique de confidentialité', `
     ${legalSec('1. Responsable du traitement', `
-      ${P}<strong style="color:var(--ink)">${RAISON_SOCIALE}</strong> (${FORME_JURIDIQUE}) — ${phFill('adresse du siège')} —
+      ${P}<strong style="color:var(--ink)">${RAISON_SOCIALE}</strong> (${FORME_JURIDIQUE}) — siège social : ${ADRESSE_SIEGE} —
       contact : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a></p>`)}
     ${legalSec('2. Données collectées', `
       ${P}<strong style="color:var(--ink)">Demande de rappel</strong> : nom (facultatif), numéro de téléphone.</p>
