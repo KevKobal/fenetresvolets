@@ -192,6 +192,13 @@ const DELAI_FLASH = 3;          // semaines — option Livraison Flash
 const FLASH_PCT = 0.20;         // supplément Livraison Flash (% du sous-total)
 const CONTACT_EMAIL = 'contact@mesfenetresvolets.fr'; // adresse de contact officielle (confirmée le 8 juillet 2026)
 const GARANTIE = 2;
+
+// Identité de l'entreprise (mentions légales, CGV) — confirmée par Kevin le 12 juillet 2026.
+const RAISON_SOCIALE = "S.A.S. L'ATELIER OXYGEN OUVERTURES";
+const FORME_JURIDIQUE = 'SAS';
+const SIREN = '999 487 689';
+const SIRET = '999 487 689 00013';
+const TVA_INTRACOM = 'FR49999487689';
 const DEMO = true;              // site de démonstration : bandeau affiché + paiement CB désactivé (passer à false au lancement réel)
 
 // Base blanche froide partagée — l'accent change selon le thème (azure = bleu net par défaut)
@@ -2238,10 +2245,10 @@ function renderMentions(){
   return legalShell('Mentions légales', 'Informations légales (LCEN)', 'Mentions légales', `
     ${legalSec('1. Éditeur du site', `
       ${P}Le site <strong style="color:var(--ink)">mesfenetresvolets.fr</strong> (le « Site ») est édité par :</p>
-      ${P}${phFill('raison sociale')}, ${phFill('forme juridique — SARL, SAS, EI…')}, au capital de ${phFill('capital social')},
-      immatriculée au RCS de ${phFill('ville du RCS')} sous le numéro ${phFill('SIREN / SIRET')},
+      ${P}<strong style="color:var(--ink)">${RAISON_SOCIALE}</strong>, ${FORME_JURIDIQUE}, au capital de ${phFill('capital social')},
+      immatriculée au RCS de ${phFill('ville du RCS')} sous le numéro <strong style="color:var(--ink)">${SIREN}</strong> (SIRET ${SIRET}),
       dont le siège social est situé ${phFill('adresse du siège')}.</p>
-      ${P}N° de TVA intracommunautaire : ${phFill('n° TVA')}.</p>
+      ${P}N° de TVA intracommunautaire : <strong style="color:var(--ink)">${TVA_INTRACOM}</strong>.</p>
       ${P}Directeur de la publication : ${phFill('nom du directeur de la publication')}.</p>
       ${P}Contact : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a></p>`)}
     ${legalSec('2. Hébergement', `
@@ -2280,7 +2287,7 @@ function renderCGV(){
       consommateur ou non professionnel (le « Client »). Toute commande vaut acceptation sans réserve des CGV en vigueur
       au jour de la commande.</p>`)}
     ${legalSec('Article 2 — Vendeur', `
-      ${P}${phFill('raison sociale')} — ${phFill('SIREN / SIRET')} — ${phFill('adresse du siège')} —
+      ${P}<strong style="color:var(--ink)">${RAISON_SOCIALE}</strong> (${FORME_JURIDIQUE}) — SIRET ${SIRET} — ${phFill('adresse du siège')} —
       contact : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a>.</p>`)}
     ${legalSec('Article 3 — Produits', `
       ${P}Le Site propose : <strong style="color:var(--ink)">(a)</strong> des volets roulants et fenêtres
@@ -2352,7 +2359,7 @@ function renderConfidentialite(){
   const P = `<p style="margin:0 0 10px">`;
   return legalShell('Confidentialité', 'Protection des données (RGPD)', 'Politique de confidentialité', `
     ${legalSec('1. Responsable du traitement', `
-      ${P}${phFill('raison sociale')} — ${phFill('adresse du siège')} —
+      ${P}<strong style="color:var(--ink)">${RAISON_SOCIALE}</strong> (${FORME_JURIDIQUE}) — ${phFill('adresse du siège')} —
       contact : <a href="mailto:${CONTACT_EMAIL}" style="color:var(--accent);font-weight:600;text-decoration:none">${CONTACT_EMAIL}</a></p>`)}
     ${legalSec('2. Données collectées', `
       ${P}<strong style="color:var(--ink)">Demande de rappel</strong> : nom (facultatif), numéro de téléphone.</p>

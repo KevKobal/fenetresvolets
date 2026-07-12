@@ -75,7 +75,9 @@
       "Bash(sort -k6)",
       "Bash(python3)",
       "Bash(mv bloc-extract.png bubendorff-bloc-id4.png)",
-      "Bash(rm -f bubendorff-bloc-id4.jpg \"N:B ID4.png\")"
+      "Bash(rm -f bubendorff-bloc-id4.jpg \"N:B ID4.png\")",
+      "Bash(ls -la CNAME)",
+      "Bash(cat CNAME)"
     ]
   }
 }
