@@ -13,11 +13,13 @@ jobs:
         uses: actions/checkout@v4
 
       # On ne publie que les fichiers du site public (pas le récap projet, ni le workflow lui-même).
+      # api/config.php est gitignoré (secrets Stripe) : absent du checkout, jamais écrasé sur le serveur.
       - name: Préparer le dossier à déployer
         run: |
           mkdir -p deploy
           cp index.html deploy/
           cp -r assets deploy/
+          cp -r api deploy/
 
       - name: Déployer vers l'hébergement OVH
         uses: wlixcc/SFTP-Deploy-Action@v1.2.4

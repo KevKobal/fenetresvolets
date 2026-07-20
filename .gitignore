@@ -7,3 +7,6 @@
 
 # Documents de travail (non publiés sur le site)
 *.pdf
+
+# Secrets serveur (clés Stripe…) — jamais dans le dépôt, déployé manuellement par SFTP
+api/config.php
