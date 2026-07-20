@@ -1,0 +1,31 @@
+name: Déploiement OVH (SFTP)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch: {}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # On ne publie que les fichiers du site public (pas le récap projet, ni le workflow lui-même).
+      - name: Préparer le dossier à déployer
+        run: |
+          mkdir -p deploy
+          cp index.html deploy/
+          cp -r assets deploy/
+
+      - name: Déployer vers l'hébergement OVH
+        uses: wlixcc/SFTP-Deploy-Action@v1.2.4
+        with:
+          username: ${{ secrets.OVH_SFTP_USER }}
+          server: ${{ secrets.OVH_SFTP_HOST }}
+          port: ${{ secrets.OVH_SFTP_PORT }}
+          password: ${{ secrets.OVH_SFTP_PASSWORD }}
+          local_path: './deploy/*'
+          remote_path: '/${{ secrets.OVH_SFTP_REMOTE_DIR }}'
+          sftp_only: true
