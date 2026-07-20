@@ -27,5 +27,5 @@ jobs:
           port: ${{ secrets.OVH_SFTP_PORT }}
           password: ${{ secrets.OVH_SFTP_PASSWORD }}
           local_path: './deploy/*'
-          remote_path: '/${{ secrets.OVH_SFTP_REMOTE_DIR }}'
+          remote_path: '${{ secrets.OVH_SFTP_REMOTE_DIR }}'
           sftp_only: true
