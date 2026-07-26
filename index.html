@@ -8,17 +8,17 @@
 <meta property="og:title" content="mesfenetresvolets.fr — Volets roulants & fenêtres sur mesure">
 <meta property="og:description" content="Volets roulants solaires Bubendorff et fenêtres PVC Kömmerling 76 sur mesure, fabriqués en France. Prix instantané en ligne.">
 <meta property="og:type" content="website">
-<meta property="og:url" content="https://kevkobal.github.io/fenetresvolets/">
-<meta property="og:image" content="https://kevkobal.github.io/fenetresvolets/assets/kommerling/76-facade.jpg">
+<meta property="og:url" content="https://mesfenetresvolets.fr/">
+<meta property="og:image" content="https://mesfenetresvolets.fr/assets/kommerling/76-facade.jpg">
 <meta property="og:locale" content="fr_FR">
 <meta property="og:site_name" content="mesfenetresvolets.fr">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="mesfenetresvolets.fr — Volets roulants & fenêtres sur mesure">
 <meta name="twitter:description" content="Volets roulants solaires Bubendorff et fenêtres PVC Kömmerling 76 sur mesure, fabriqués en France. Prix instantané en ligne.">
-<meta name="twitter:image" content="https://kevkobal.github.io/fenetresvolets/assets/kommerling/76-facade.jpg">
+<meta name="twitter:image" content="https://mesfenetresvolets.fr/assets/kommerling/76-facade.jpg">
 <meta name="theme-color" content="#2563EB">
 <meta name="robots" content="index, follow">
-<link rel="canonical" href="https://kevkobal.github.io/fenetresvolets/">
+<link rel="canonical" href="https://mesfenetresvolets.fr/">
 <style>
 /* Polices auto-hébergées (ex-Google Fonts — RGPD : plus aucun appel aux serveurs Google) */
 @font-face{font-family:'Hanken Grotesk';font-style:normal;font-weight:400 700;font-display:swap;src:url('assets/fonts/hanken-grotesk-latin-ext.woff2') format('woff2');unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
@@ -339,8 +339,10 @@ let S = {
   fenetre: { w:1000, h:1150, ouverture:'2v',    couleur:'blanc', faces:'2', seuil:'non', grille:'non', poignee:'1000', matiere:'pvc', vitrage:'double', profil:'76md', sens:'droite', qty:1 },
   cart: [],
   flash: false,     // option Livraison Flash (délai raccourci, +20%)
-  lastOrder: null,
-  payCard:'', payExp:'', payCvc:'', payName:'',
+  lastOrder: null,      // récapitulatif affiché sur l'écran de confirmation (rempli via api/order-status.php)
+  payLoading: false,    // redirection vers Stripe Checkout en cours
+  payError: false,      // échec de création de la session Stripe (réseau, serveur…)
+  payCanceled: false,   // retour depuis Stripe après annulation du paiement
   client:{ nom:'', prenom:'', adresse:'', cp:'', ville:'', tel:'', mail:'' },
   checkoutError:false,
   cb:{ nom:'', tel:'' }, cbSent:false,
@@ -482,9 +484,9 @@ function cliValid(){
   return c.nom.trim() && c.prenom.trim() && c.adresse.trim() && /^\d{5}$/.test(c.cp.trim()) &&
          c.ville.trim() && c.tel.replace(/\D/g,'').length >= 9 && /^\S+@\S+\.\S+$/.test(c.mail.trim());
 }
-function payValid(){
-  return cliValid() && S.payCard.replace(/\D/g,'').length >= 15 && S.payExp.length >= 4 && S.payCvc.length >= 3 && S.payName.trim().length > 2;
-}
+// Le paiement CB lui-même (numéro, expiration, CVC, 3-D Secure) se déroule entièrement
+// sur la page Stripe Checkout — seules les coordonnées client sont validées ici.
+function payValid(){ return cliValid(); }
 
 // ─────────────────────────────────────────────────────────────────────────────
 // STATE MUTATIONS
@@ -671,24 +673,28 @@ function addPiece(id){
   render();
 }
 
-function setPayCard(e){ S.payCard = e.target.value.replace(/[^0-9 ]/g,'').slice(0,19); e.target.value = S.payCard; }
-function setPayExp(e){  S.payExp  = e.target.value.replace(/[^0-9/ ]/g,'').slice(0,7); e.target.value = S.payExp; }
-function setPayCvc(e){  S.payCvc  = e.target.value.replace(/[^0-9]/g,'').slice(0,4); e.target.value = S.payCvc; }
-function setPayName(e){ S.payName = e.target.value; }
 function setCli(k,e){ S.client[k] = e.target.value; }
 function setCb(k,e){ S.cb[k] = e.target.value; }
 
-function onPay(){
+// Envoie le panier au serveur (qui recalcule le prix), obtient une session Stripe
+// Checkout, puis redirige vers la page de paiement hébergée par Stripe — le numéro
+// de carte n'est jamais saisi sur ce site.
+async function onPay(){
   if(!payValid()){ S.checkoutError = true; window.scrollTo(0,0); render(); return; }
-  const T = totals();
-  const no = 'MFV-2026-'+Math.floor(1000+Math.random()*9000);
-  const weeks = T.weeks || DELAI_MENUISERIE;
-  const eta = new Date(Date.now()+weeks*7*864e5).toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
-  S.lastOrder = {no, eta, weeks, flash:T.flashActive, total:T.total, items:[...S.cart], client:{...S.client}};
-  S.cart = []; S.flash = false; S.screen = 'confirm'; S.checkoutError = false;
-  S.payCard = ''; S.payExp = ''; S.payCvc = ''; S.payName = '';
-  window.scrollTo(0,0);
-  render();
+  S.payLoading = true; S.payError = false; S.checkoutError = false; render();
+  try{
+    const res = await fetch('/api/create-checkout-session.php', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ cart: S.cart, flash: S.flash, client: S.client })
+    });
+    const data = await res.json();
+    if(!res.ok || !data.url) throw new Error(data.error || 'stripe_error');
+    window.location.href = data.url;
+  }catch(e){
+    S.payLoading = false; S.payError = true;
+    window.scrollTo(0,0); render();
+  }
 }
 
 function goCallback(){ S.cbSent = false; go('callback'); }
@@ -1678,7 +1684,9 @@ function renderPayment(){
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px">${fld('tel','Téléphone','06 12 34 56 78','inputmode=tel')}${fld('mail','E-mail','jean.dupont@email.fr','inputmode=email')}</div>
       <p style="font-size:12px;color:var(--muted);margin:14px 0 0;line-height:1.5">Ces informations sont nécessaires au traitement et à la livraison de votre commande — voir notre <span onclick="goConfidentialite()" style="color:var(--accent);cursor:pointer">politique de confidentialité</span>.</p>
     </div>`;
-  const errBanner = err ? `<div style="background:#fdecea;border:1px solid #f3b5b0;color:#a3322b;font-size:13.5px;font-weight:600;padding:12px 16px;border-radius:10px;margin-bottom:18px">Merci de compléter vos coordonnées et vos informations de paiement (champs en rouge).</div>` : '';
+  const errBanner = err ? `<div style="background:#fdecea;border:1px solid #f3b5b0;color:#a3322b;font-size:13.5px;font-weight:600;padding:12px 16px;border-radius:10px;margin-bottom:18px">Merci de compléter vos coordonnées (champs en rouge).</div>` : '';
+  const payErrBanner = S.payError ? `<div style="background:#fdecea;border:1px solid #f3b5b0;color:#a3322b;font-size:13.5px;font-weight:600;padding:12px 16px;border-radius:10px;margin-bottom:18px">Impossible de démarrer le paiement pour le moment. Merci de réessayer dans un instant.</div>` : '';
+  const canceledBanner = S.payCanceled ? `<div style="background:var(--section);border:1px solid var(--line);color:var(--ink);font-size:13.5px;font-weight:600;padding:12px 16px;border-radius:10px;margin-bottom:18px">Paiement annulé — votre panier est conservé, vous pouvez réessayer quand vous le souhaitez.</div>` : '';
 
   const orderLines = S.cart.map(it =>
     `<div style="display:flex;justify-content:space-between;gap:10px">
@@ -1694,36 +1702,25 @@ function renderPayment(){
     <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-size:34px;font-weight:800;letter-spacing:-.025em;margin:0 0 30px;color:var(--ink)">Paiement sécurisé</h1>
 
     ${errBanner}
+    ${payErrBanner}
+    ${canceledBanner}
     <div style="display:grid;grid-template-columns:1fr 330px;gap:34px;align-items:start">
       <div>
         ${cliCard}
-        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:20px${DEMO ? ';opacity:.55' : ''}">
-          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-            <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:19px;font-weight:700;margin:0;color:var(--ink)">Carte bancaire</h3>
+        <div style="background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:26px;margin-bottom:20px">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+            <h3 style="font-family:'Schibsted Grotesk',sans-serif;font-size:19px;font-weight:700;margin:0;color:var(--ink)">Paiement par carte</h3>
             <div style="display:flex;gap:6px">
               <span style="font-size:11px;font-weight:700;background:var(--section);border:1px solid var(--line);padding:4px 8px;border-radius:5px;color:var(--muted)">CB</span>
               <span style="font-size:11px;font-weight:700;background:var(--section);border:1px solid var(--line);padding:4px 8px;border-radius:5px;color:var(--muted)">VISA</span>
               <span style="font-size:11px;font-weight:700;background:var(--section);border:1px solid var(--line);padding:4px 8px;border-radius:5px;color:var(--muted)">MC</span>
             </div>
           </div>
-          <label style="font-size:13px;font-weight:600;color:var(--ink);display:block;margin-bottom:7px">Numéro de carte</label>
-          <input ${DEMO?'disabled':''} value="${S.payCard}" oninput="setPayCard(event)" placeholder="1234 5678 9012 3456" inputmode="numeric" autocomplete="off" style="width:100%;padding:13px;border:1px solid var(--line);border-radius:9px;font-size:15px;letter-spacing:1px;margin-bottom:16px;background:var(--section);color:var(--ink)">
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
-            <div>
-              <label style="font-size:13px;font-weight:600;color:var(--ink);display:block;margin-bottom:7px">Expiration</label>
-              <input ${DEMO?'disabled':''} value="${S.payExp}" oninput="setPayExp(event)" placeholder="MM / AA" autocomplete="off" style="width:100%;padding:13px;border:1px solid var(--line);border-radius:9px;font-size:15px;background:var(--section);color:var(--ink)">
-            </div>
-            <div>
-              <label style="font-size:13px;font-weight:600;color:var(--ink);display:block;margin-bottom:7px">CVC</label>
-              <input ${DEMO?'disabled':''} value="${S.payCvc}" oninput="setPayCvc(event)" placeholder="123" inputmode="numeric" autocomplete="off" style="width:100%;padding:13px;border:1px solid var(--line);border-radius:9px;font-size:15px;background:var(--section);color:var(--ink)">
-            </div>
-          </div>
-          <label style="font-size:13px;font-weight:600;color:var(--ink);display:block;margin-bottom:7px">Titulaire de la carte</label>
-          <input ${DEMO?'disabled':''} value="${(S.payName||'').replace(/"/g,'&quot;')}" oninput="setPayName(event)" placeholder="Prénom Nom" autocomplete="off" style="width:100%;padding:13px;border:1px solid var(--line);border-radius:9px;font-size:15px;background:var(--section);color:var(--ink)">
+          <p style="font-size:14.5px;line-height:1.6;color:var(--muted);margin:0">En cliquant sur « Payer », vous serez redirigé vers la page de paiement sécurisée <strong style="color:var(--ink)">Stripe</strong> pour saisir votre carte (3-D Secure). Numéro, expiration et CVC ne transitent jamais par ce site.</p>
         </div>
         ${DEMO ? `
         <div style="display:flex;gap:11px;align-items:flex-start;background:#FEF3C7;border:1px solid #FCD34D;border-radius:10px;padding:14px 16px;font-size:13px;color:#78350F;line-height:1.5">
-          <span><strong>Site de démonstration :</strong> le paiement en ligne n'est pas encore activé. Aucune donnée bancaire ne peut être saisie, aucun paiement n'est encaissé.</span>
+          <span><strong>Site de démonstration — paiement en mode test :</strong> aucune carte réelle n'est débitée durant cette phase de test.</span>
         </div>` : `
         <div style="display:flex;gap:11px;align-items:flex-start;background:var(--accent-soft);border-radius:10px;padding:14px 16px;font-size:13px;color:var(--ink);line-height:1.5">
           <span>Vos informations sont chiffrées. À la validation, votre <strong>bon de commande</strong> est transmis automatiquement à notre atelier pour fabrication.</span>
@@ -1751,10 +1748,7 @@ function renderPayment(){
           <span style="font-size:15px;font-weight:700;color:var(--ink)">Total</span>
           <span style="font-family:'Schibsted Grotesk',sans-serif;font-size:26px;font-weight:800;letter-spacing:-.02em;color:var(--ink)">${eur(T.total)}</span>
         </div>
-        ${DEMO ? `
-        <button disabled class="neon-btn" style="width:100%;padding:16px;font-size:16px;opacity:.45;pointer-events:none">Paiement bientôt disponible</button>
-        <div style="text-align:center;font-size:12.5px;color:var(--muted);margin-top:10px">Démonstration — aucun paiement n'est encaissé.</div>` : `
-        <button onclick="onPay()" class="neon-btn" style="width:100%;padding:16px;font-size:16px">Payer ${eur(T.total)}</button>`}
+        <button onclick="onPay()" ${S.payLoading?'disabled':''} class="neon-btn" style="width:100%;padding:16px;font-size:16px${S.payLoading?';opacity:.6;pointer-events:none':''}">${S.payLoading ? 'Redirection vers le paiement…' : 'Payer '+eur(T.total)}</button>
         <div style="text-align:center;font-size:12px;color:var(--muted);margin-top:10px">En validant votre commande, vous acceptez nos <span onclick="goCGV()" style="color:var(--accent);cursor:pointer">CGV</span>.</div>
       </aside>
     </div>
@@ -1801,7 +1795,24 @@ function renderConfirm(){
   const order = S.lastOrder;
   if(!order) return `<main style="text-align:center;padding:80px 32px"><button onclick="goHome()" class="neon-btn" style="padding:14px 28px;font-size:15px">Retour à l'accueil</button></main>`;
 
-  const items = order.items.map(it => `
+  // Le paiement Stripe a eu lieu, mais la confirmation serveur (webhook) peut prendre
+  // quelques instants — on ne prétend jamais qu'une commande est payée sans l'avoir
+  // vérifié auprès du serveur (voir pollOrderStatus).
+  if(order.status === 'checking'){
+    return `<main style="max-width:560px;margin:0 auto;padding:110px 32px;text-align:center" class="anim">
+      <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-size:26px;font-weight:800;margin:0 0 12px;color:var(--ink)">Vérification de votre paiement…</h1>
+      <p style="font-size:15px;color:var(--muted);line-height:1.6">Un instant, nous confirmons votre commande auprès de notre prestataire de paiement.</p>
+    </main>`;
+  }
+  if(order.status !== 'paid'){
+    return `<main style="max-width:560px;margin:0 auto;padding:100px 32px;text-align:center" class="anim">
+      <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-size:26px;font-weight:800;margin:0 0 12px;color:var(--ink)">Paiement en cours de confirmation</h1>
+      <p style="font-size:15px;color:var(--muted);line-height:1.6;margin:0 0 26px">Votre paiement a bien été transmis à Stripe ; la confirmation finale peut prendre encore quelques instants. Vous recevrez un e-mail dès que votre commande sera validée.</p>
+      <button onclick="goHome()" class="neon-btn" style="padding:14px 28px;font-size:15px">Retour à l'accueil</button>
+    </main>`;
+  }
+
+  const items = (order.lines||[]).map(it => `
     <div style="display:flex;justify-content:space-between;gap:12px">
       <div>
         <div style="font-weight:600;color:var(--ink);font-size:15px">${itemTitle(it)}</div>
@@ -1810,13 +1821,17 @@ function renderConfirm(){
       <div style="font-weight:700;color:var(--ink);white-space:nowrap">${eur(it.total)}</div>
     </div>`).join('');
 
+  const weeks = order.weeks || DELAI_MENUISERIE;
+  const eta = new Date(Date.now()+weeks*7*864e5).toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+  const ref = (order.orderId||'').slice(0,10).toUpperCase();
+
   return `<main style="max-width:680px;margin:0 auto;padding:70px 32px 90px;text-align:center" class="anim">
     <div style="width:74px;height:74px;border-radius:50%;background:var(--accent);display:inline-flex;align-items:center;justify-content:center;margin-bottom:26px">
       <span style="color:#fff;font-size:36px;line-height:1">✓</span>
     </div>
     <h1 style="font-family:'Schibsted Grotesk',sans-serif;font-size:38px;font-weight:800;letter-spacing:-.025em;margin:0 0 12px;color:var(--ink)">Merci, votre commande est confirmée</h1>
     <p style="font-size:17px;color:var(--muted);line-height:1.6;margin:0 0 8px">Un e-mail de confirmation vous a été envoyé. Votre <strong style="color:var(--ink)">bon de commande</strong> a été transmis à notre atelier pour lancement en fabrication.</p>
-    <div style="display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:14px;padding:9px 18px;border-radius:999px;margin:18px 0 34px">Commande ${order.no}</div>
+    <div style="display:inline-block;background:var(--accent-soft);color:var(--accent);font-weight:700;font-size:14px;padding:9px 18px;border-radius:999px;margin:18px 0 34px">Commande ${ref}</div>
 
     <div style="background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:26px;text-align:left;margin-bottom:24px">
       <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:16px">${items}</div>
@@ -1827,7 +1842,7 @@ function renderConfirm(){
     </div>
 
     <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;font-size:14px;color:var(--muted);margin-bottom:34px">
-      <span>Délai estimé : <strong style="color:var(--ink)">${order.weeks||DELAI_MENUISERIE} semaines</strong> · livraison vers le <strong style="color:var(--ink)">${order.eta}</strong>${order.flash ? ` <span style="color:var(--accent);font-weight:700">Flash</span>` : ''}</span>
+      <span>Délai estimé : <strong style="color:var(--ink)">${weeks} semaines</strong> · livraison vers le <strong style="color:var(--ink)">${eta}</strong>${order.flashActive ? ` <span style="color:var(--accent);font-weight:700">Flash</span>` : ''}</span>
     </div>
     <button onclick="goHome()" class="neon-btn" style="padding:14px 28px;font-size:15px">Retour à l'accueil</button>
   </main>`;
@@ -2691,6 +2706,49 @@ function savoirMount(){
   savoirAutoplay();
 }
 
+// Retour depuis Stripe Checkout — succès (?paid=1&order=…) ou annulation (?canceled=1).
+// On ne considère JAMAIS une commande payée sur la seule foi de l'URL (manipulable) :
+// pollOrderStatus() vérifie toujours le statut réel auprès du serveur.
+function handleStripeReturn(){
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('order');
+  if(params.get('paid') === '1' && orderId){
+    S.screen = 'confirm';
+    S.lastOrder = { orderId, status: 'checking' };
+    window.history.replaceState({}, '', window.location.pathname);
+    pollOrderStatus(orderId);
+  } else if(params.get('canceled') === '1'){
+    S.screen = 'payment';
+    S.payCanceled = true;
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+}
+
+// Interroge le statut réel de la commande — le webhook Stripe peut mettre quelques
+// instants à confirmer le paiement après la redirection, d'où les tentatives espacées.
+async function pollOrderStatus(orderId, attempt){
+  attempt = attempt || 0;
+  try{
+    const res = await fetch('/api/order-status.php?order=' + encodeURIComponent(orderId));
+    const data = await res.json();
+    if(res.ok && data.status === 'paid'){
+      S.lastOrder = Object.assign({orderId}, data);
+      S.cart = []; S.flash = false; // la commande est confirmée, on vide le panier local
+      render();
+      return;
+    }
+    if(attempt < 6){
+      setTimeout(() => pollOrderStatus(orderId, attempt + 1), 1500);
+    } else {
+      S.lastOrder = { orderId, status: (data && data.status) || 'pending' };
+      render();
+    }
+  }catch(e){
+    S.lastOrder = { orderId, status: 'error' };
+    render();
+  }
+}
+
 // Données structurées (SEO) — Store + FAQPage. Injectées au boot ; Google exécute le
 // JS et les indexe (source unique : faqData(), pas de duplication).
 function injectJsonLd(){
@@ -2699,9 +2757,9 @@ function injectJsonLd(){
     const org = {
       "@context":"https://schema.org", "@type":"Store",
       "name":"mesfenetresvolets.fr",
-      "url":"https://kevkobal.github.io/fenetresvolets/",
+      "url":"https://mesfenetresvolets.fr/",
       "email":CONTACT_EMAIL,
-      "image":"https://kevkobal.github.io/fenetresvolets/assets/kommerling/76-facade.jpg",
+      "image":"https://mesfenetresvolets.fr/assets/kommerling/76-facade.jpg",
       "description":"Volets roulants solaires Bubendorff et fenêtres PVC Kömmerling 76 sur mesure, fabriqués en France.",
       "areaServed":"FR", "priceRange":"€€"
     };
@@ -2733,6 +2791,7 @@ document.addEventListener('keydown', e => {
 
 // Boot
 loadPersisted();
+handleStripeReturn();
 injectJsonLd();
 _render();
 </script>
